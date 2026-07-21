@@ -1,0 +1,51 @@
+{
+  "id": "media",
+  "name": "Media",
+  "type": "SharedSlice",
+  "variations": [
+    {
+      "id": "image",
+      "name": "Image",
+      "description": "Image",
+      "docURL": "",
+      "imageUrl": "",
+      "version": "",
+      "primary": {
+        "image": {
+          "type": "Image",
+          "config": {
+            "label": "Image"
+          }
+        },
+        "caption": {
+          "type": "Text",
+          "config": {
+            "label": "Caption"
+          }
+        }
+      }
+    },
+    {
+      "id": "video",
+      "name": "Video",
+      "description": "Video",
+      "docURL": "",
+      "imageUrl": "",
+      "version": "",
+      "primary": {
+        "video": {
+          "type": "Embed",
+          "config": {
+            "label": "Video"
+          }
+        },
+        "caption": {
+          "type": "Text",
+          "config": {
+            "label": "Caption"
+          }
+        }
+      }
+    }
+  ]
+}

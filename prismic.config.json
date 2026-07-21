@@ -1,0 +1,29 @@
+{
+  "repositoryName": "the-prismic-lab",
+  "routes": [
+    {
+      "type": "author",
+      "path": "/authors/:uid"
+    },
+    {
+      "type": "category",
+      "path": "/categories/:uid"
+    },
+    {
+      "type": "experiment",
+      "path": "/experiments/:uid"
+    },
+    {
+      "type": "fix",
+      "path": "/fixes/:uid"
+    },
+    {
+      "type": "homepage",
+      "path": "/"
+    },
+    {
+      "type": "tech",
+      "path": "/tech/:uid"
+    }
+  ]
+}

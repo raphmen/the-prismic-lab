@@ -1,0 +1,33 @@
+{
+  "id": "header",
+  "label": "Header",
+  "repeatable": false,
+  "status": true,
+  "format": "custom",
+  "json": {
+    "Main": {
+      "logo": {
+        "type": "Image",
+        "config": {
+          "label": "Logo"
+        }
+      },
+      "nav_links": {
+        "type": "Link",
+        "config": {
+          "label": "Navigation Links",
+          "allowText": true,
+          "repeat": true
+        }
+      },
+      "ctas": {
+        "type": "Link",
+        "config": {
+          "label": "CTAs",
+          "allowText": true,
+          "repeat": true
+        }
+      }
+    }
+  }
+}

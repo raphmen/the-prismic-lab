@@ -1,0 +1,80 @@
+{
+  "id": "related",
+  "name": "Related",
+  "type": "SharedSlice",
+  "variations": [
+    {
+      "id": "manual",
+      "name": "Manual",
+      "description": "Manual",
+      "docURL": "",
+      "imageUrl": "",
+      "version": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title"
+          }
+        },
+        "subtitle": {
+          "type": "Text",
+          "config": {
+            "label": "Subtitle"
+          }
+        },
+        "items": {
+          "type": "Group",
+          "config": {
+            "label": "Items",
+            "fields": {
+              "article": {
+                "type": "Link",
+                "config": {
+                  "label": "Article",
+                  "select": "document",
+                  "customtypes": [
+                    "experiment",
+                    "fix"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "auto",
+      "name": "Auto",
+      "description": "Auto",
+      "docURL": "",
+      "imageUrl": "",
+      "version": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title"
+          }
+        },
+        "subtitle": {
+          "type": "Text",
+          "config": {
+            "label": "Subtitle"
+          }
+        },
+        "category": {
+          "type": "Link",
+          "config": {
+            "label": "Category",
+            "select": "document",
+            "customtypes": [
+              "category"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

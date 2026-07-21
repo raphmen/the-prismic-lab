@@ -1,0 +1,58 @@
+{
+  "id": "callout",
+  "name": "Callout",
+  "type": "SharedSlice",
+  "variations": [
+    {
+      "id": "info",
+      "name": "Info",
+      "description": "Info",
+      "docURL": "",
+      "imageUrl": "",
+      "version": "",
+      "primary": {
+        "content": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content",
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        }
+      }
+    },
+    {
+      "id": "warning",
+      "name": "Warning",
+      "description": "Warning",
+      "docURL": "",
+      "imageUrl": "",
+      "version": "",
+      "primary": {
+        "content": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content",
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        }
+      }
+    },
+    {
+      "id": "tip",
+      "name": "Tip",
+      "description": "Tip",
+      "docURL": "",
+      "imageUrl": "",
+      "version": "",
+      "primary": {
+        "content": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content",
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        }
+      }
+    }
+  ]
+}
