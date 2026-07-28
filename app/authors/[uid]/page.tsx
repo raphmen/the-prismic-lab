@@ -4,15 +4,16 @@ import { asText, filter, isFilled } from "@prismicio/client";
 import { PrismicNextImage, PrismicNextLink } from "@prismicio/next";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
+import { collectDocuments } from "@/lib/prismic";
 import { RichText } from "@/components/RichText";
-import { ArticleList } from "@/components/ArticleList";
+import { ArticleList, type Article } from "@/components/ArticleList";
 
 export default async function Page({ params }: PageProps<"/authors/[uid]">) {
 	const { uid } = await params;
 	const client = createClient();
 	const author = await client.getByUID("author", uid).catch(() => notFound());
 
-	const [experiments, fixes] = await Promise.all([
+	const articles = await collectDocuments<Article>([
 		client.getAllByType("experiment", {
 			filters: [filter.at("my.experiment.author", author.id)],
 		}),
@@ -60,7 +61,7 @@ export default async function Page({ params }: PageProps<"/authors/[uid]">) {
 				</div>
 			) : null}
 
-			<ArticleList articles={[...experiments, ...fixes]} />
+			<ArticleList articles={articles} />
 		</div>
 	);
 }

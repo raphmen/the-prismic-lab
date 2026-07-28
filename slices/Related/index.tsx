@@ -1,14 +1,13 @@
 import { Content, filter, isFilled } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { createClient } from "@/prismicio";
-import { ArticleList } from "@/components/ArticleList";
+import { collectDocuments } from "@/lib/prismic";
+import { ArticleList, type Article } from "@/components/ArticleList";
 
 /**
  * Props for `Related`.
  */
 export type RelatedProps = SliceComponentProps<Content.RelatedSlice>;
-
-type Article = Content.ExperimentDocument | Content.FixDocument;
 
 /**
  * Component for "Related" Slices.
@@ -29,7 +28,7 @@ const Related = async ({ slice }: RelatedProps) => {
 	} else if (slice.variation === "auto") {
 		const category = slice.primary.category;
 		if (isFilled.contentRelationship(category)) {
-			const [experiments, fixes] = await Promise.all([
+			articles = await collectDocuments<Article>([
 				client.getAllByType("experiment", {
 					filters: [filter.at("my.experiment.category", category.id)],
 				}),
@@ -37,7 +36,6 @@ const Related = async ({ slice }: RelatedProps) => {
 					filters: [filter.at("my.fix.category", category.id)],
 				}),
 			]);
-			articles = [...experiments, ...fixes];
 		}
 	}
 

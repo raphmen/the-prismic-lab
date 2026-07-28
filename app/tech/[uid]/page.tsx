@@ -4,6 +4,7 @@ import { asText, filter, isFilled } from "@prismicio/client";
 import { PrismicNextImage } from "@prismicio/next";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
+import { collectDocuments } from "@/lib/prismic";
 import { ArticleList } from "@/components/ArticleList";
 
 export default async function Page({ params }: PageProps<"/tech/[uid]">) {
@@ -11,9 +12,11 @@ export default async function Page({ params }: PageProps<"/tech/[uid]">) {
 	const client = createClient();
 	const tech = await client.getByUID("tech", uid).catch(() => notFound());
 
-	const experiments = await client.getAllByType("experiment", {
-		filters: [filter.at("my.experiment.stack.tech", tech.id)],
-	});
+	const experiments = await collectDocuments([
+		client.getAllByType("experiment", {
+			filters: [filter.at("my.experiment.stack.tech", tech.id)],
+		}),
+	]);
 
 	return (
 		<div className="mx-auto w-full max-w-3xl px-6 py-16">

@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { asText, filter } from "@prismicio/client";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
+import { collectDocuments } from "@/lib/prismic";
 import { RichText } from "@/components/RichText";
-import { ArticleList } from "@/components/ArticleList";
+import { ArticleList, type Article } from "@/components/ArticleList";
 
 export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 	const { uid } = await params;
@@ -13,7 +14,7 @@ export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 		.getByUID("category", uid)
 		.catch(() => notFound());
 
-	const [experiments, fixes] = await Promise.all([
+	const articles = await collectDocuments<Article>([
 		client.getAllByType("experiment", {
 			filters: [filter.at("my.experiment.category", category.id)],
 		}),
@@ -36,7 +37,7 @@ export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 				</div>
 			</header>
 
-			<ArticleList articles={[...experiments, ...fixes]} />
+			<ArticleList articles={articles} />
 		</div>
 	);
 }

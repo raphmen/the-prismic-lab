@@ -1,7 +1,7 @@
 import { asText, type Content } from "@prismicio/client";
 import { PrismicNextLink } from "@prismicio/next";
 
-type Article = Content.ExperimentDocument | Content.FixDocument;
+export type Article = Content.ExperimentDocument | Content.FixDocument;
 
 export function ArticleList({ articles }: { articles: Article[] }) {
 	if (articles.length === 0) {
