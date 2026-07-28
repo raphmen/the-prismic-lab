@@ -76,31 +76,62 @@
                 "label": "Tech",
                 "select": "document",
                 "customtypes": [
-                  "tech"
+                  {
+                    "id": "tech",
+                    "fields": [
+                      "name"
+                    ]
+                  }
                 ]
               }
             }
           }
         }
       },
-      "category": {
-        "type": "Link",
+      "categories": {
+        "type": "Group",
         "config": {
-          "label": "Category",
-          "select": "document",
-          "customtypes": [
-            "category"
-          ]
+          "label": "Categories",
+          "fields": {
+            "category": {
+              "type": "Link",
+              "config": {
+                "label": "Category",
+                "select": "document",
+                "customtypes": [
+                  {
+                    "id": "category",
+                    "fields": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
         }
       },
-      "author": {
-        "type": "Link",
+      "authors": {
+        "type": "Group",
         "config": {
-          "label": "Author",
-          "select": "document",
-          "customtypes": [
-            "author"
-          ]
+          "label": "Authors",
+          "fields": {
+            "author": {
+              "type": "Link",
+              "config": {
+                "label": "Author",
+                "select": "document",
+                "customtypes": [
+                  {
+                    "id": "author",
+                    "fields": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
         }
       },
       "published_date": {

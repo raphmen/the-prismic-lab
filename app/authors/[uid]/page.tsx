@@ -15,10 +15,10 @@ export default async function Page({ params }: PageProps<"/authors/[uid]">) {
 
 	const articles = await collectDocuments<Article>([
 		client.getAllByType("experiment", {
-			filters: [filter.at("my.experiment.author", author.id)],
+			filters: [filter.at("my.experiment.authors.author", author.id)],
 		}),
 		client.getAllByType("fix", {
-			filters: [filter.at("my.fix.author", author.id)],
+			filters: [filter.at("my.fix.authors.author", author.id)],
 		}),
 	]);
 

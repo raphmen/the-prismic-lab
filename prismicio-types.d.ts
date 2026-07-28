@@ -245,7 +245,37 @@ export interface ExperimentDocumentDataStackItem {
 	 * - **API ID Path**: experiment.stack[].tech
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	tech: prismic.ContentRelationshipField<"tech">;
+	tech: ContentRelationshipFieldWithData<[{"id":"tech","fields":["name"]}]>;
+}
+
+/**
+ * Item in *Experiment → Categories*
+ */
+export interface ExperimentDocumentDataCategoriesItem {
+	/**
+	 * Category field in *Experiment → Categories*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: experiment.categories[].category
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	category: ContentRelationshipFieldWithData<[{"id":"category","fields":["name"]}]>;
+}
+
+/**
+ * Item in *Experiment → Authors*
+ */
+export interface ExperimentDocumentDataAuthorsItem {
+	/**
+	 * Author field in *Experiment → Authors*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: experiment.authors[].author
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	author: ContentRelationshipFieldWithData<[{"id":"author","fields":["name"]}]>;
 }
 
 /**
@@ -319,26 +349,26 @@ interface ExperimentDocumentData {
 	stack: prismic.GroupField<Simplify<ExperimentDocumentDataStackItem>>;
 	
 	/**
-	 * Category field in *Experiment*
+	 * Categories field in *Experiment*
 	 *
-	 * - **Field Type**: Content Relationship
+	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: experiment.category
+	 * - **API ID Path**: experiment.categories[]
 	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
-	category: prismic.ContentRelationshipField<"category">;
+	categories: prismic.GroupField<Simplify<ExperimentDocumentDataCategoriesItem>>;
 	
 	/**
-	 * Author field in *Experiment*
+	 * Authors field in *Experiment*
 	 *
-	 * - **Field Type**: Content Relationship
+	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: experiment.author
+	 * - **API ID Path**: experiment.authors[]
 	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
-	author: prismic.ContentRelationshipField<"author">;
+	authors: prismic.GroupField<Simplify<ExperimentDocumentDataAuthorsItem>>;
 	
 	/**
 	 * Published Date field in *Experiment*
@@ -397,6 +427,36 @@ export type ExperimentDocument<Lang extends string = string> = prismic.PrismicDo
 type FixDocumentDataSlicesSlice = RichTextSlice | CodeSnippetSlice | CalloutSlice | RelatedSlice
 
 /**
+ * Item in *Fix → Categories*
+ */
+export interface FixDocumentDataCategoriesItem {
+	/**
+	 * Category field in *Fix → Categories*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: fix.categories[].category
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	category: ContentRelationshipFieldWithData<[{"id":"category","fields":["name"]}]>;
+}
+
+/**
+ * Item in *Fix → Authors*
+ */
+export interface FixDocumentDataAuthorsItem {
+	/**
+	 * Author field in *Fix → Authors*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: fix.authors[].author
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	author: ContentRelationshipFieldWithData<[{"id":"author","fields":["name"]}]>;
+}
+
+/**
  * Content for Fix documents
  */
 interface FixDocumentData {
@@ -445,26 +505,26 @@ interface FixDocumentData {
 	featured_image: prismic.ImageField<never>;
 	
 	/**
-	 * Category field in *Fix*
+	 * Categories field in *Fix*
 	 *
-	 * - **Field Type**: Content Relationship
+	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.category
+	 * - **API ID Path**: fix.categories[]
 	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
-	category: prismic.ContentRelationshipField<"category">;
+	categories: prismic.GroupField<Simplify<FixDocumentDataCategoriesItem>>;
 	
 	/**
-	 * Author field in *Fix*
+	 * Authors field in *Fix*
 	 *
-	 * - **Field Type**: Content Relationship
+	 * - **Field Type**: Group
 	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.author
+	 * - **API ID Path**: fix.authors[]
 	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
 	 */
-	author: prismic.ContentRelationshipField<"author">;
+	authors: prismic.GroupField<Simplify<FixDocumentDataAuthorsItem>>;
 	
 	/**
 	 * Published Date field in *Fix*
@@ -1275,9 +1335,13 @@ declare module "@prismicio/client" {
 			ExperimentDocumentData,
 			ExperimentDocumentDataSlicesSlice,
 			ExperimentDocumentDataStackItem,
+			ExperimentDocumentDataCategoriesItem,
+			ExperimentDocumentDataAuthorsItem,
 			FixDocument,
 			FixDocumentData,
 			FixDocumentDataSlicesSlice,
+			FixDocumentDataCategoriesItem,
+			FixDocumentDataAuthorsItem,
 			FooterDocument,
 			FooterDocumentData,
 			FooterDocumentDataFooterLinksItem,

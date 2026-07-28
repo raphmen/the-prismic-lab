@@ -16,10 +16,10 @@ export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 
 	const articles = await collectDocuments<Article>([
 		client.getAllByType("experiment", {
-			filters: [filter.at("my.experiment.category", category.id)],
+			filters: [filter.at("my.experiment.categories.category", category.id)],
 		}),
 		client.getAllByType("fix", {
-			filters: [filter.at("my.fix.category", category.id)],
+			filters: [filter.at("my.fix.categories.category", category.id)],
 		}),
 	]);
 

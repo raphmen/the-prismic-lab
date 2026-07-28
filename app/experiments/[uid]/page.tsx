@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { asText, isFilled, type Content } from "@prismicio/client";
+import { asText, isFilled } from "@prismicio/client";
 import { PrismicText, SliceZone } from "@prismicio/react";
 import { PrismicNextLink } from "@prismicio/next";
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
 import { buildMetadata } from "@/lib/seo";
 import { ArticleCover } from "@/components/ArticleCover";
+import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
+import type { ArticleContext } from "@/slices/Related";
 
 function formatDate(date: string | null) {
 	if (!date) return null;
@@ -21,24 +23,28 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 	const { uid } = await params;
 	const client = createClient();
 	const experiment = await client
-		.getByUID("experiment", uid)
+		.getByUID("experiment", uid, { fetchLinks: ARTICLE_FETCH_LINKS })
 		.catch(() => notFound());
 
-	const [category, author] = await Promise.all([
-		isFilled.contentRelationship(experiment.data.category)
-			? client.getByID<Content.CategoryDocument>(experiment.data.category.id)
-			: null,
-		isFilled.contentRelationship(experiment.data.author)
-			? client.getByID<Content.AuthorDocument>(experiment.data.author.id)
-			: null,
-	]);
+	/**
+	 * The categories, authors and stack all resolve their linked names through
+	 * `ARTICLE_FETCH_LINKS` above, so each is just a map over its group.
+	 *
+	 * The API leaves a group out of its response entirely when the document has
+	 * no items for it (including documents last saved before the group existed),
+	 * so each one is read through a fallback even though its type says array.
+	 */
+	const categories = (experiment.data.categories ?? [])
+		.map((item) => item.category)
+		.filter(isFilled.contentRelationship);
 
-	const techs = await Promise.all(
-		experiment.data.stack
-			.map((item) => item.tech)
-			.filter(isFilled.contentRelationship)
-			.map((tech) => client.getByID<Content.TechDocument>(tech.id)),
-	);
+	const authors = (experiment.data.authors ?? [])
+		.map((item) => item.author)
+		.filter(isFilled.contentRelationship);
+
+	const techs = (experiment.data.stack ?? [])
+		.map((item) => item.tech)
+		.filter(isFilled.contentRelationship);
 
 	const publishedDate = formatDate(experiment.data.published_date);
 
@@ -53,14 +59,15 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 							{experiment.data.difficulty}
 						</span>
 					) : null}
-					{category ? (
+					{categories.map((category) => (
 						<PrismicNextLink
-							document={category}
+							key={category.id}
+							field={category}
 							className="transition-colors hover:text-foreground"
 						>
-							{asText(category.data.name)}
+							{asText(category.data?.name)}
 						</PrismicNextLink>
-					) : null}
+					))}
 					{publishedDate ? <span>{publishedDate}</span> : null}
 				</div>
 
@@ -75,23 +82,28 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 				) : null}
 
 				<div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-					{author ? (
-						<PrismicNextLink
-							document={author}
-							className="font-medium text-foreground transition-colors hover:text-foreground"
-						>
-							{asText(author.data.name)}
-						</PrismicNextLink>
+					{authors.length > 0 ? (
+						<div className="flex flex-wrap gap-x-2 gap-y-1">
+							{authors.map((author) => (
+								<PrismicNextLink
+									key={author.id}
+									field={author}
+									className="font-medium text-foreground transition-colors hover:text-foreground"
+								>
+									{asText(author.data?.name)}
+								</PrismicNextLink>
+							))}
+						</div>
 					) : null}
 					{techs.length > 0 ? (
 						<div className="flex flex-wrap gap-2">
 							{techs.map((tech) => (
 								<PrismicNextLink
 									key={tech.id}
-									document={tech}
+									field={tech}
 									className="rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:border-subtle hover:text-foreground"
 								>
-									{asText(tech.data.name)}
+									{asText(tech.data?.name)}
 								</PrismicNextLink>
 							))}
 						</div>
@@ -99,7 +111,11 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 				</div>
 			</header>
 
-			<SliceZone slices={experiment.data.slices} components={components} />
+			<SliceZone
+				slices={experiment.data.slices}
+				components={components}
+				context={{ article: experiment } satisfies ArticleContext}
+			/>
 		</article>
 	);
 }

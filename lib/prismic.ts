@@ -1,6 +1,24 @@
 import { ParsingError, type PrismicDocument } from "@prismicio/client";
 
 /**
+ * Linked fields the article templates need alongside the article itself.
+ *
+ * An article's categories, authors and stack are content relationships nested
+ * inside repeatable groups, and only their IDs come back by default. Asking for
+ * the linked names here resolves every one of them in the same request, however
+ * many group items there are, instead of one follow-up query per link.
+ *
+ * The relationships also declare these fields in the content model, which is
+ * what types them as `link.data.name` — this list is what actually populates
+ * them at query time.
+ */
+export const ARTICLE_FETCH_LINKS = [
+	"category.name",
+	"author.name",
+	"tech.name",
+];
+
+/**
  * Runs document queries side by side and concatenates their results.
  *
  * Prismic only exposes `my.<type>.<field>` as a queryable path once at least one

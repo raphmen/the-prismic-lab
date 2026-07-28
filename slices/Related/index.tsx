@@ -5,14 +5,28 @@ import { collectDocuments } from "@/lib/prismic";
 import { ArticleList, type Article } from "@/components/ArticleList";
 
 /**
+ * Context the article templates pass down through their Slice Zone. The Auto
+ * variation needs the article it sits on to know which categories to match and
+ * which document to leave out. It is optional because other Slice Zones — the
+ * Slice Simulator, for one — render slices without an article.
+ */
+export type ArticleContext = { article?: Article };
+
+/** How many related articles the Auto variation shows at most. */
+const AUTO_LIMIT = 4;
+
+/**
  * Props for `Related`.
  */
-export type RelatedProps = SliceComponentProps<Content.RelatedSlice>;
+export type RelatedProps = SliceComponentProps<
+	Content.RelatedSlice,
+	ArticleContext
+>;
 
 /**
  * Component for "Related" Slices.
  */
-const Related = async ({ slice }: RelatedProps) => {
+const Related = async ({ slice, context }: RelatedProps) => {
 	const client = createClient();
 	let articles: Article[] = [];
 
@@ -26,16 +40,36 @@ const Related = async ({ slice }: RelatedProps) => {
 			articles = await client.getAllByIDs<Article>(ids);
 		}
 	} else if (slice.variation === "auto") {
-		const category = slice.primary.category;
-		if (isFilled.contentRelationship(category)) {
-			articles = await collectDocuments<Article>([
-				client.getAllByType("experiment", {
-					filters: [filter.at("my.experiment.category", category.id)],
-				}),
-				client.getAllByType("fix", {
-					filters: [filter.at("my.fix.category", category.id)],
-				}),
-			]);
+		const article = context?.article;
+
+		/**
+		 * Articles carry several categories now, so "related" means sharing *at
+		 * least one* of them: `any` is an OR over the current article's category
+		 * IDs. The article itself is filtered out so it never lists itself.
+		 */
+		const categoryIds = (article?.data.categories ?? [])
+			.map((item) => item.category)
+			.filter(isFilled.contentRelationship)
+			.map((category) => category.id);
+
+		if (article && categoryIds.length > 0) {
+			const sharedCategory = (type: "experiment" | "fix") => [
+				filter.any(`my.${type}.categories.category`, categoryIds),
+				filter.not("document.id", article.id),
+			];
+
+			articles = (
+				await collectDocuments<Article>([
+					client.getAllByType("experiment", {
+						filters: sharedCategory("experiment"),
+						limit: AUTO_LIMIT,
+					}),
+					client.getAllByType("fix", {
+						filters: sharedCategory("fix"),
+						limit: AUTO_LIMIT,
+					}),
+				])
+			).slice(0, AUTO_LIMIT);
 		}
 	}
 
