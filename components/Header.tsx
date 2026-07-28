@@ -1,6 +1,7 @@
 import { isFilled } from "@prismicio/client";
 import { PrismicNextImage, PrismicNextLink } from "@prismicio/next";
 import { createClient } from "@/prismicio";
+import { MobileMenu } from "@/components/MobileMenu";
 
 export async function Header() {
 	const client = createClient();
@@ -12,11 +13,11 @@ export async function Header() {
 	const siteName = settings.data.site_name || "The Prismic Lab";
 
 	return (
-		<header className="border-b border-neutral-200">
+		<header className="fixed w-full bg-background">
 			<div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between gap-6 px-6">
 				<PrismicNextLink
 					href="/"
-					className="flex items-center gap-2 text-neutral-900"
+					className="flex items-center gap-2 text-foreground"
 					aria-label={siteName}
 				>
 					{isFilled.image(header.data.logo) ? (
@@ -32,22 +33,27 @@ export async function Header() {
 					)}
 				</PrismicNextLink>
 
-				<nav className="flex items-center gap-6">
+				<nav className="hidden items-center gap-6 md:flex">
 					{header.data.nav_links.map((link, i) => (
 						<PrismicNextLink
 							key={i}
 							field={link}
-							className="text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+							className="text-sm text-muted-foreground transition-colors hover:text-foreground"
 						/>
 					))}
 					{header.data.ctas.map((cta, i) => (
 						<PrismicNextLink
 							key={i}
 							field={cta}
-							className="rounded-full bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+							className="rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
 						/>
 					))}
 				</nav>
+
+				<MobileMenu
+					navLinks={header.data.nav_links}
+					ctas={header.data.ctas}
+				/>
 			</div>
 		</header>
 	);

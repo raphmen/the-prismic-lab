@@ -43,17 +43,17 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 
 	return (
 		<article className="mx-auto w-full max-w-3xl px-6 py-16">
-			<header className="mb-10 border-b border-neutral-200 pb-10">
-				<div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-neutral-500">
+			<header className="mb-10 border-b border-border pb-10">
+				<div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
 					{experiment.data.difficulty ? (
-						<span className="rounded-full bg-neutral-100 px-3 py-1 font-medium text-neutral-700">
+						<span className="rounded-full bg-muted px-3 py-1 font-medium text-foreground">
 							{experiment.data.difficulty}
 						</span>
 					) : null}
 					{category ? (
 						<PrismicNextLink
 							document={category}
-							className="transition-colors hover:text-neutral-900"
+							className="transition-colors hover:text-foreground"
 						>
 							{asText(category.data.name)}
 						</PrismicNextLink>
@@ -61,21 +61,21 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 					{publishedDate ? <span>{publishedDate}</span> : null}
 				</div>
 
-				<h1 className="text-4xl font-semibold tracking-tight text-neutral-900">
+				<h1 className="text-4xl font-semibold tracking-tight text-foreground">
 					<PrismicText field={experiment.data.title} />
 				</h1>
 
 				{experiment.data.excerpt ? (
-					<p className="mt-4 text-lg leading-8 text-neutral-600">
+					<p className="mt-4 text-lg leading-8 text-muted-foreground">
 						{experiment.data.excerpt}
 					</p>
 				) : null}
 
-				<div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-neutral-500">
+				<div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
 					{author ? (
 						<PrismicNextLink
 							document={author}
-							className="font-medium text-neutral-700 transition-colors hover:text-neutral-900"
+							className="font-medium text-foreground transition-colors hover:text-foreground"
 						>
 							{asText(author.data.name)}
 						</PrismicNextLink>
@@ -86,7 +86,7 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 								<PrismicNextLink
 									key={tech.id}
 									document={tech}
-									className="rounded-md border border-neutral-200 px-2 py-0.5 text-xs text-neutral-600 transition-colors hover:border-neutral-400 hover:text-neutral-900"
+									className="rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:border-subtle hover:text-foreground"
 								>
 									{asText(tech.data.name)}
 								</PrismicNextLink>

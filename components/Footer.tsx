@@ -12,7 +12,7 @@ export async function Footer() {
 	const siteName = settings.data.site_name || "The Prismic Lab";
 
 	return (
-		<footer className="mt-24 border-t border-neutral-200">
+		<footer className="mt-24 border-t border-border">
 			<div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-12 sm:flex-row sm:items-start sm:justify-between">
 				<div className="flex flex-col gap-3">
 					<PrismicNextLink href="/" aria-label={siteName}>
@@ -23,13 +23,13 @@ export async function Footer() {
 								className="h-8 w-auto"
 							/>
 						) : (
-							<span className="text-base font-semibold tracking-tight text-neutral-900">
+							<span className="text-base font-semibold tracking-tight text-foreground">
 								{siteName}
 							</span>
 						)}
 					</PrismicNextLink>
 					{footer.data.copyright ? (
-						<p className="text-sm text-neutral-500">{footer.data.copyright}</p>
+						<p className="text-sm text-muted-foreground">{footer.data.copyright}</p>
 					) : null}
 				</div>
 
@@ -39,7 +39,7 @@ export async function Footer() {
 							<PrismicNextLink
 								key={i}
 								field={item.link}
-								className="text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+								className="text-sm text-muted-foreground transition-colors hover:text-foreground"
 							>
 								{item.label}
 							</PrismicNextLink>
@@ -53,7 +53,7 @@ export async function Footer() {
 							<PrismicNextLink
 								key={i}
 								field={item.url}
-								className="text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+								className="text-sm text-muted-foreground transition-colors hover:text-foreground"
 							>
 								{item.network || "Link"}
 							</PrismicNextLink>

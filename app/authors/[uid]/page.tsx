@@ -32,10 +32,10 @@ export default async function Page({ params }: PageProps<"/authors/[uid]">) {
 					/>
 				) : null}
 				<div>
-					<p className="mb-1 text-xs font-medium tracking-wide text-neutral-400 uppercase">
+					<p className="mb-1 text-xs font-medium tracking-wide text-subtle uppercase">
 						Author
 					</p>
-					<h1 className="text-3xl font-semibold tracking-tight text-neutral-900">
+					<h1 className="text-3xl font-semibold tracking-tight text-foreground">
 						{asText(author.data.name)}
 					</h1>
 					{author.data.links.length > 0 ? (
@@ -44,7 +44,7 @@ export default async function Page({ params }: PageProps<"/authors/[uid]">) {
 								<PrismicNextLink
 									key={i}
 									field={link.url}
-									className="text-neutral-500 transition-colors hover:text-neutral-900"
+									className="text-muted-foreground transition-colors hover:text-foreground"
 								>
 									{link.network || "Link"}
 								</PrismicNextLink>
@@ -55,7 +55,7 @@ export default async function Page({ params }: PageProps<"/authors/[uid]">) {
 			</header>
 
 			{isFilled.richText(author.data.bio) ? (
-				<div className="mb-12 border-b border-neutral-200 pb-8 text-neutral-600">
+				<div className="mb-12 border-b border-border pb-8 text-muted-foreground">
 					<RichText field={author.data.bio} />
 				</div>
 			) : null}

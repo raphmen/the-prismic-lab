@@ -12,7 +12,7 @@ const components: RichTextComponents = {
 	heading1: ({ children, key }) => (
 		<h1
 			key={key}
-			className="mt-10 mb-4 text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl"
+			className="mt-10 mb-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
 		>
 			{children}
 		</h1>
@@ -20,7 +20,7 @@ const components: RichTextComponents = {
 	heading2: ({ children, key }) => (
 		<h2
 			key={key}
-			className="mt-10 mb-4 text-2xl font-semibold tracking-tight text-neutral-900"
+			className="mt-10 mb-4 text-2xl font-semibold tracking-tight text-foreground"
 		>
 			{children}
 		</h2>
@@ -28,44 +28,44 @@ const components: RichTextComponents = {
 	heading3: ({ children, key }) => (
 		<h3
 			key={key}
-			className="mt-8 mb-3 text-xl font-semibold tracking-tight text-neutral-900"
+			className="mt-8 mb-3 text-xl font-semibold tracking-tight text-foreground"
 		>
 			{children}
 		</h3>
 	),
 	heading4: ({ children, key }) => (
-		<h4 key={key} className="mt-6 mb-2 text-lg font-semibold text-neutral-900">
+		<h4 key={key} className="mt-6 mb-2 text-lg font-semibold text-foreground">
 			{children}
 		</h4>
 	),
 	heading5: ({ children, key }) => (
-		<h5 key={key} className="mt-6 mb-2 text-base font-semibold text-neutral-900">
+		<h5 key={key} className="mt-6 mb-2 text-base font-semibold text-foreground">
 			{children}
 		</h5>
 	),
 	heading6: ({ children, key }) => (
 		<h6
 			key={key}
-			className="mt-6 mb-2 text-sm font-semibold tracking-wide text-neutral-900 uppercase"
+			className="mt-6 mb-2 text-sm font-semibold tracking-wide text-foreground uppercase"
 		>
 			{children}
 		</h6>
 	),
 	paragraph: ({ children, key }) => (
-		<p key={key} className="my-4 leading-7 text-neutral-700">
+		<p key={key} className="my-4 leading-7 text-foreground">
 			{children}
 		</p>
 	),
 	preformatted: ({ node, key }) => (
 		<pre
 			key={key}
-			className="my-6 overflow-x-auto rounded-lg bg-neutral-900 p-4 font-mono text-sm leading-6 text-neutral-100"
+			className="my-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm leading-6 text-foreground"
 		>
 			<code>{node.text}</code>
 		</pre>
 	),
 	strong: ({ children, key }) => (
-		<strong key={key} className="font-semibold text-neutral-900">
+		<strong key={key} className="font-semibold text-foreground">
 			{children}
 		</strong>
 	),
@@ -77,7 +77,7 @@ const components: RichTextComponents = {
 	list: ({ children, key }) => (
 		<ul
 			key={key}
-			className="my-4 list-disc space-y-2 pl-6 text-neutral-700 marker:text-neutral-400"
+			className="my-4 list-disc space-y-2 pl-6 text-foreground marker:text-subtle"
 		>
 			{children}
 		</ul>
@@ -85,7 +85,7 @@ const components: RichTextComponents = {
 	oList: ({ children, key }) => (
 		<ol
 			key={key}
-			className="my-4 list-decimal space-y-2 pl-6 text-neutral-700 marker:text-neutral-400"
+			className="my-4 list-decimal space-y-2 pl-6 text-foreground marker:text-subtle"
 		>
 			{children}
 		</ol>
@@ -104,7 +104,7 @@ const components: RichTextComponents = {
 		<PrismicNextLink
 			key={key}
 			field={node.data}
-			className="font-medium text-neutral-900 underline decoration-neutral-300 underline-offset-2 transition-colors hover:decoration-neutral-900"
+			className="font-medium text-foreground underline decoration-subtle underline-offset-2 transition-colors hover:decoration-foreground"
 		>
 			{children}
 		</PrismicNextLink>
@@ -113,7 +113,7 @@ const components: RichTextComponents = {
 		<figure key={key} className="my-8">
 			<PrismicNextImage field={node} fallbackAlt="" className="w-full rounded-lg" />
 			{node.alt ? (
-				<figcaption className="mt-2 text-center text-sm text-neutral-500">
+				<figcaption className="mt-2 text-center text-sm text-muted-foreground">
 					{node.alt}
 				</figcaption>
 			) : null}

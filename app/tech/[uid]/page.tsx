@@ -26,16 +26,16 @@ export default async function Page({ params }: PageProps<"/tech/[uid]">) {
 					/>
 				) : null}
 				<div>
-					<p className="mb-1 text-xs font-medium tracking-wide text-neutral-400 uppercase">
+					<p className="mb-1 text-xs font-medium tracking-wide text-subtle uppercase">
 						Tech
 					</p>
-					<h1 className="text-3xl font-semibold tracking-tight text-neutral-900">
+					<h1 className="text-3xl font-semibold tracking-tight text-foreground">
 						{asText(tech.data.name)}
 					</h1>
 				</div>
 			</header>
 
-			<h2 className="mb-4 text-sm font-medium tracking-wide text-neutral-500 uppercase">
+			<h2 className="mb-4 text-sm font-medium tracking-wide text-muted-foreground uppercase">
 				Experiments using {asText(tech.data.name)}
 			</h2>
 			<ArticleList articles={experiments} />

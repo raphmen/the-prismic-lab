@@ -25,13 +25,13 @@ export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 	return (
 		<div className="mx-auto w-full max-w-3xl px-6 py-16">
 			<header className="mb-10">
-				<p className="mb-2 text-xs font-medium tracking-wide text-neutral-400 uppercase">
+				<p className="mb-2 text-xs font-medium tracking-wide text-subtle uppercase">
 					Category
 				</p>
-				<h1 className="text-4xl font-semibold tracking-tight text-neutral-900">
+				<h1 className="text-4xl font-semibold tracking-tight text-foreground">
 					{asText(category.data.name)}
 				</h1>
-				<div className="mt-4 text-neutral-600">
+				<div className="mt-4 text-muted-foreground">
 					<RichText field={category.data.description} />
 				</div>
 			</header>

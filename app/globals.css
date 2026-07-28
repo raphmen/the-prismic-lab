@@ -1,15 +1,46 @@
 @import "tailwindcss";
 
 :root {
-	--foreground: #171717;
-	--background: #ffffff;
+	/* Base surface + primary text */
+	--background: #171717;
+	--foreground: #ffffff;
+	/* Elevated surfaces (chips, code blocks) */
+	--muted: #262626;
+	/* Secondary text (captions, nav, meta) */
+	--muted-foreground: #a3a3a3;
+	/* Tertiary text (eyebrows, list markers, link decoration) */
+	--subtle: #737373;
+	/* Hairlines and dividers */
+	--border: #404040;
+	/* Emphasis (buttons) — inverts against the background */
+	--accent: #ffffff;
+	--accent-foreground: #171717;
 }
 
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
-	--font-sans: var(--font-geist-sans);
-	--font-mono: var(--font-geist-mono);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-subtle: var(--subtle);
+	--color-border: var(--border);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+	--font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+	/* Mobile nav panel drop-in */
+	--animate-panel-in: panel-in 160ms ease-out;
+}
+
+@keyframes panel-in {
+	from {
+		opacity: 0;
+		transform: translateY(-0.25rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 body {
@@ -18,4 +49,11 @@ body {
 	font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+	font-weight: semibold;
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
