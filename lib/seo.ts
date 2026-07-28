@@ -18,12 +18,20 @@ export type SeoInput = {
 	meta_image?: ImageField;
 	/** Used as the title when `meta_title` is empty (e.g. the page's own title). */
 	fallbackTitle?: string | RichTextField;
+	/**
+	 * Used as the OG image when `meta_image` is empty, before falling back to the
+	 * Settings default (e.g. an article's editorial `featured_image`).
+	 */
+	fallbackImage?: ImageField;
 };
 
 /**
  * Builds Next.js `Metadata` from a page's SEO tab, falling back to the values
  * configured on the Settings singleton (site name, title template, default
  * description, default OG image).
+ *
+ * The OG image resolves in order: `meta_image`, then `fallbackImage`, then the
+ * Settings default.
  */
 export async function buildMetadata(input: SeoInput): Promise<Metadata> {
 	const client = createClient();
@@ -50,7 +58,9 @@ export async function buildMetadata(input: SeoInput): Promise<Metadata> {
 
 	const ogImage = isFilled.image(input.meta_image)
 		? input.meta_image
-		: settings.data.default_og_image;
+		: isFilled.image(input.fallbackImage)
+			? input.fallbackImage
+			: settings.data.default_og_image;
 
 	return {
 		title,

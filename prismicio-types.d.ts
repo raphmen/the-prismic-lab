@@ -286,6 +286,17 @@ interface ExperimentDocumentData {
 	excerpt: prismic.KeyTextField;
 	
 	/**
+	 * Featured Image field in *Experiment*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: experiment.featured_image
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	featured_image: prismic.ImageField<never>;
+	
+	/**
 	 * Difficulty field in *Experiment*
 	 *
 	 * - **Field Type**: Select
@@ -421,6 +432,17 @@ interface FixDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/text
 	 */
 	excerpt: prismic.KeyTextField;
+	
+	/**
+	 * Featured Image field in *Fix*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: fix.featured_image
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	featured_image: prismic.ImageField<never>;
 	
 	/**
 	 * Category field in *Fix*

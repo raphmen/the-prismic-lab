@@ -6,6 +6,7 @@ import { PrismicNextLink } from "@prismicio/next";
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
 import { buildMetadata } from "@/lib/seo";
+import { ArticleCover } from "@/components/ArticleCover";
 
 function formatDate(date: string | null) {
 	if (!date) return null;
@@ -34,6 +35,8 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 
 	return (
 		<article className="mx-auto w-full max-w-3xl px-6 py-16">
+			<ArticleCover field={fix.data.featured_image} />
+
 			<header className="mb-10 border-b border-border pb-10">
 				<div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
 					<span className="rounded-full bg-muted px-3 py-1 font-medium text-foreground">
@@ -89,6 +92,7 @@ export async function generateMetadata({
 		meta_description: fix.data.meta_description || fix.data.excerpt,
 		meta_image: fix.data.meta_image,
 		fallbackTitle: fix.data.title,
+		fallbackImage: fix.data.featured_image,
 	});
 }
 

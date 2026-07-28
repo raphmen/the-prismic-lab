@@ -45,6 +45,12 @@
           "label": "Excerpt"
         }
       },
+      "featured_image": {
+        "type": "Image",
+        "config": {
+          "label": "Featured Image"
+        }
+      },
       "category": {
         "type": "Link",
         "config": {
