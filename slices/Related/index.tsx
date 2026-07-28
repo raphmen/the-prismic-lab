@@ -1,8 +1,9 @@
 import { Content, filter, isFilled } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { createClient } from "@/prismicio";
-import { collectDocuments } from "@/lib/prismic";
-import { ArticleList, type Article } from "@/components/ArticleList";
+import { ARTICLE_FETCH_LINKS, collectDocuments } from "@/lib/prismic";
+import { ArticleList } from "@/components/ArticleList";
+import type { Article } from "@/lib/articles";
 
 /**
  * Context the article templates pass down through their Slice Zone. The Auto
@@ -37,7 +38,9 @@ const Related = async ({ slice, context }: RelatedProps) => {
 			.map((article) => article.id);
 
 		if (ids.length > 0) {
-			articles = await client.getAllByIDs<Article>(ids);
+			articles = await client.getAllByIDs<Article>(ids, {
+				fetchLinks: ARTICLE_FETCH_LINKS,
+			});
 		}
 	} else if (slice.variation === "auto") {
 		const article = context?.article;
@@ -62,10 +65,12 @@ const Related = async ({ slice, context }: RelatedProps) => {
 				await collectDocuments<Article>([
 					client.getAllByType("experiment", {
 						filters: sharedCategory("experiment"),
+						fetchLinks: ARTICLE_FETCH_LINKS,
 						limit: AUTO_LIMIT,
 					}),
 					client.getAllByType("fix", {
 						filters: sharedCategory("fix"),
+						fetchLinks: ARTICLE_FETCH_LINKS,
 						limit: AUTO_LIMIT,
 					}),
 				])

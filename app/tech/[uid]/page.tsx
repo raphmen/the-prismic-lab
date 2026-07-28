@@ -4,7 +4,7 @@ import { asText, filter, isFilled } from "@prismicio/client";
 import { PrismicNextImage } from "@prismicio/next";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
-import { collectDocuments } from "@/lib/prismic";
+import { ARTICLE_FETCH_LINKS, collectDocuments } from "@/lib/prismic";
 import { ArticleList } from "@/components/ArticleList";
 
 export default async function Page({ params }: PageProps<"/tech/[uid]">) {
@@ -15,6 +15,7 @@ export default async function Page({ params }: PageProps<"/tech/[uid]">) {
 	const experiments = await collectDocuments([
 		client.getAllByType("experiment", {
 			filters: [filter.at("my.experiment.stack.tech", tech.id)],
+			fetchLinks: ARTICLE_FETCH_LINKS,
 		}),
 	]);
 

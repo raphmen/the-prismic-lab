@@ -8,16 +8,8 @@ import { components } from "@/slices";
 import { buildMetadata } from "@/lib/seo";
 import { ArticleCover } from "@/components/ArticleCover";
 import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
+import { formatArticleDate } from "@/lib/articles";
 import type { ArticleContext } from "@/slices/Related";
-
-function formatDate(date: string | null) {
-	if (!date) return null;
-	return new Intl.DateTimeFormat("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	}).format(new Date(date));
-}
 
 export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 	const { uid } = await params;
@@ -42,7 +34,7 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 		.map((item) => item.author)
 		.filter(isFilled.contentRelationship);
 
-	const publishedDate = formatDate(fix.data.published_date);
+	const publishedDate = formatArticleDate(fix.data.published_date);
 
 	return (
 		<article className="mx-auto w-full max-w-3xl px-6 py-16">

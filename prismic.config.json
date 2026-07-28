@@ -6,6 +6,10 @@
       "path": "/authors/:uid"
     },
     {
+      "type": "categories_index",
+      "path": "/categories"
+    },
+    {
       "type": "category",
       "path": "/categories/:uid"
     },
@@ -14,8 +18,16 @@
       "path": "/experiments/:uid"
     },
     {
+      "type": "experiments_index",
+      "path": "/experiments"
+    },
+    {
       "type": "fix",
       "path": "/fixes/:uid"
+    },
+    {
+      "type": "fixes_index",
+      "path": "/fixes"
     },
     {
       "type": "homepage",

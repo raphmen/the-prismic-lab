@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { asText, filter } from "@prismicio/client";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
-import { collectDocuments } from "@/lib/prismic";
+import { ARTICLE_FETCH_LINKS, collectDocuments } from "@/lib/prismic";
 import { RichText } from "@/components/RichText";
-import { ArticleList, type Article } from "@/components/ArticleList";
+import { ArticleList } from "@/components/ArticleList";
+import type { Article } from "@/lib/articles";
 
 export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 	const { uid } = await params;
@@ -17,9 +18,11 @@ export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 	const articles = await collectDocuments<Article>([
 		client.getAllByType("experiment", {
 			filters: [filter.at("my.experiment.categories.category", category.id)],
+			fetchLinks: ARTICLE_FETCH_LINKS,
 		}),
 		client.getAllByType("fix", {
 			filters: [filter.at("my.fix.categories.category", category.id)],
+			fetchLinks: ARTICLE_FETCH_LINKS,
 		}),
 	]);
 

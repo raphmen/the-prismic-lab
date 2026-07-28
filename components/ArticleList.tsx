@@ -1,56 +1,30 @@
-import { asText, isFilled, type Content } from "@prismicio/client";
-import { PrismicNextImage, PrismicNextLink } from "@prismicio/next";
+import { ArticleCard } from "@/components/ArticleCard";
+import type { Article } from "@/lib/articles";
 
-export type Article = Content.ExperimentDocument | Content.FixDocument;
+export type ArticleListProps = {
+	articles: Article[];
+	/** Shown instead of the grid when there is nothing to list. */
+	emptyMessage?: string;
+};
 
-export function ArticleList({ articles }: { articles: Article[] }) {
+/**
+ * A grid of `ArticleCard`s, plus the empty state. This component is only the
+ * layout — what an article looks like lives in `ArticleCard`, which every
+ * listing on the site shares.
+ */
+export function ArticleList({
+	articles,
+	emptyMessage = "Nothing here yet.",
+}: ArticleListProps) {
 	if (articles.length === 0) {
-		return <p className="text-sm text-muted-foreground">Nothing here yet.</p>;
+		return <p className="text-sm text-muted-foreground">{emptyMessage}</p>;
 	}
 
-	/**
-	 * The thumbnail column only exists once something in the list has an image —
-	 * an all-empty list keeps its original text-only layout rather than showing a
-	 * row of placeholders.
-	 */
-	const withThumbnails = articles.some((article) =>
-		isFilled.image(article.data.featured_image),
-	);
-
 	return (
-		<ul className="divide-y divide-border border-t border-border">
+		<ul className="grid gap-x-8 gap-y-10 sm:grid-cols-2">
 			{articles.map((article) => (
-				<li key={article.id} className="py-6">
-					<PrismicNextLink
-						document={article}
-						className="group flex items-start gap-5"
-					>
-						{withThumbnails ? (
-							<div className="w-28 shrink-0 overflow-hidden rounded-md bg-muted sm:w-36">
-								<PrismicNextImage
-									field={article.data.featured_image}
-									fallbackAlt=""
-									sizes="(min-width: 640px) 9rem, 7rem"
-									className="aspect-video w-full object-cover"
-									fallback={<div className="aspect-video w-full" />}
-								/>
-							</div>
-						) : null}
-
-						<div className="min-w-0">
-							<div className="mb-1 flex items-center gap-2 text-xs font-medium tracking-wide text-subtle uppercase">
-								{article.type === "experiment" ? "Experiment" : "Fix"}
-							</div>
-							<h3 className="text-lg font-semibold tracking-tight text-foreground group-hover:underline">
-								{asText(article.data.title)}
-							</h3>
-							{article.data.excerpt ? (
-								<p className="mt-1 line-clamp-2 text-sm leading-6 text-muted-foreground">
-									{article.data.excerpt}
-								</p>
-							) : null}
-						</div>
-					</PrismicNextLink>
+				<li key={article.id}>
+					<ArticleCard article={article} />
 				</li>
 			))}
 		</ul>
