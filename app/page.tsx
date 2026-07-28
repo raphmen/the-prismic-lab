@@ -8,8 +8,13 @@ export default async function Home() {
 	const client = createClient();
 	const home = await client.getSingle("homepage");
 
+	/**
+	 * No width here on purpose: the homepage is a bare Slice Zone, so every slice
+	 * picks its own measure through `Container` and one of them can run edge to
+	 * edge without this shell standing in the way.
+	 */
 	return (
-		<div className="mx-auto w-full max-w-3xl px-6 py-16">
+		<div className="py-16">
 			<SliceZone slices={home.data.slices} components={components} />
 		</div>
 	);

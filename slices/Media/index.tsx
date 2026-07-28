@@ -2,6 +2,7 @@ import { FC } from "react";
 import { Content, isFilled } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { PrismicNextImage } from "@prismicio/next";
+import { Container } from "@/components/Container";
 
 /**
  * Props for `Media`.
@@ -12,8 +13,15 @@ export type MediaProps = SliceComponentProps<Content.MediaSlice>;
  * Component for "Media" Slices.
  */
 const Media: FC<MediaProps> = ({ slice }) => {
+	/**
+	 * The readiest candidate for going edge to edge — an image or an embed needs
+	 * no reading measure. It stays at `prose` until an editor can ask otherwise;
+	 * `size="full"` is the whole change when that switch arrives.
+	 */
 	return (
-		<figure
+		<Container
+			as="figure"
+			size="prose"
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			className="my-10"
@@ -38,7 +46,7 @@ const Media: FC<MediaProps> = ({ slice }) => {
 					{slice.primary.caption}
 				</figcaption>
 			) : null}
-		</figure>
+		</Container>
 	);
 };
 

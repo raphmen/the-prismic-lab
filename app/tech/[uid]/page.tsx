@@ -5,6 +5,7 @@ import { PrismicNextImage } from "@prismicio/next";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
 import { ARTICLE_FETCH_LINKS, collectDocuments } from "@/lib/prismic";
+import { Container } from "@/components/Container";
 import { ArticleList } from "@/components/ArticleList";
 
 export default async function Page({ params }: PageProps<"/tech/[uid]">) {
@@ -20,7 +21,7 @@ export default async function Page({ params }: PageProps<"/tech/[uid]">) {
 	]);
 
 	return (
-		<div className="mx-auto w-full max-w-3xl px-6 py-16">
+		<Container size="prose" className="py-16">
 			<header className="mb-10 flex items-center gap-4">
 				{isFilled.image(tech.data.logo) ? (
 					<PrismicNextImage
@@ -43,7 +44,7 @@ export default async function Page({ params }: PageProps<"/tech/[uid]">) {
 				Experiments using {asText(tech.data.name)}
 			</h2>
 			<ArticleList articles={experiments} />
-		</div>
+		</Container>
 	);
 }
 

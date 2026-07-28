@@ -4,6 +4,7 @@ import { asText, filter } from "@prismicio/client";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
 import { ARTICLE_FETCH_LINKS, collectDocuments } from "@/lib/prismic";
+import { Container } from "@/components/Container";
 import { RichText } from "@/components/RichText";
 import { ArticleList } from "@/components/ArticleList";
 import type { Article } from "@/lib/articles";
@@ -27,7 +28,7 @@ export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 	]);
 
 	return (
-		<div className="mx-auto w-full max-w-3xl px-6 py-16">
+		<Container size="prose" className="py-16">
 			<header className="mb-10">
 				<p className="mb-2 text-xs font-medium tracking-wide text-subtle uppercase">
 					Category
@@ -41,7 +42,7 @@ export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 			</header>
 
 			<ArticleList articles={articles} />
-		</div>
+		</Container>
 	);
 }
 

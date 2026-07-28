@@ -6,6 +6,7 @@ import { PrismicNextLink } from "@prismicio/next";
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
 import { buildMetadata } from "@/lib/seo";
+import { Container } from "@/components/Container";
 import { ArticleCover } from "@/components/ArticleCover";
 import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
 import { formatArticleDate } from "@/lib/articles";
@@ -36,51 +37,58 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 
 	const publishedDate = formatArticleDate(fix.data.published_date);
 
+	/**
+	 * The article itself sets no width — the cover and the masthead ask for the
+	 * reading measure explicitly, and the Slice Zone below leaves each slice to
+	 * choose its own, so a full-bleed slice is not boxed in by this template.
+	 */
 	return (
-		<article className="mx-auto w-full max-w-3xl px-6 py-16">
-			<ArticleCover field={fix.data.featured_image} />
+		<article className="py-16">
+			<Container size="prose">
+				<ArticleCover field={fix.data.featured_image} />
 
-			<header className="mb-10 border-b border-border pb-10">
-				<div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-					<span className="rounded-full bg-muted px-3 py-1 font-medium text-foreground">
-						Fix
-					</span>
-					{categories.map((category) => (
-						<PrismicNextLink
-							key={category.id}
-							field={category}
-							className="transition-colors hover:text-foreground"
-						>
-							{asText(category.data?.name)}
-						</PrismicNextLink>
-					))}
-					{publishedDate ? <span>{publishedDate}</span> : null}
-				</div>
-
-				<h1 className="text-4xl font-semibold tracking-tight text-foreground">
-					<PrismicText field={fix.data.title} />
-				</h1>
-
-				{fix.data.excerpt ? (
-					<p className="mt-4 text-lg leading-8 text-muted-foreground">
-						{fix.data.excerpt}
-					</p>
-				) : null}
-
-				{authors.length > 0 ? (
-					<div className="mt-6 flex flex-wrap gap-x-2 gap-y-1 text-sm text-muted-foreground">
-						{authors.map((author) => (
+				<header className="mb-10 border-b border-border pb-10">
+					<div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+						<span className="rounded-full bg-muted px-3 py-1 font-medium text-foreground">
+							Fix
+						</span>
+						{categories.map((category) => (
 							<PrismicNextLink
-								key={author.id}
-								field={author}
-								className="font-medium text-foreground transition-colors hover:text-foreground"
+								key={category.id}
+								field={category}
+								className="transition-colors hover:text-foreground"
 							>
-								{asText(author.data?.name)}
+								{asText(category.data?.name)}
 							</PrismicNextLink>
 						))}
+						{publishedDate ? <span>{publishedDate}</span> : null}
 					</div>
-				) : null}
-			</header>
+
+					<h1 className="text-4xl font-semibold tracking-tight text-foreground">
+						<PrismicText field={fix.data.title} />
+					</h1>
+
+					{fix.data.excerpt ? (
+						<p className="mt-4 text-lg leading-8 text-muted-foreground">
+							{fix.data.excerpt}
+						</p>
+					) : null}
+
+					{authors.length > 0 ? (
+						<div className="mt-6 flex flex-wrap gap-x-2 gap-y-1 text-sm text-muted-foreground">
+							{authors.map((author) => (
+								<PrismicNextLink
+									key={author.id}
+									field={author}
+									className="font-medium text-foreground transition-colors hover:text-foreground"
+								>
+									{asText(author.data?.name)}
+								</PrismicNextLink>
+							))}
+						</div>
+					) : null}
+				</header>
+			</Container>
 
 			<SliceZone
 				slices={fix.data.slices}

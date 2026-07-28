@@ -3,6 +3,7 @@ import { asText } from "@prismicio/client";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
 import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
+import { Container } from "@/components/Container";
 import { EditorialHeader } from "@/components/EditorialHeader";
 import { CategoryBrowser } from "@/components/CategoryBrowser";
 import type { Article } from "@/lib/articles";
@@ -47,7 +48,7 @@ export default async function Page() {
 	const articles: Article[] = [...experiments, ...fixes];
 
 	return (
-		<div className="mx-auto w-full max-w-5xl px-6 py-16">
+		<Container className="py-16">
 			<EditorialHeader
 				title={index?.data.title}
 				description={index?.data.description}
@@ -55,7 +56,7 @@ export default async function Page() {
 			/>
 
 			<CategoryBrowser categories={sortedCategories} articles={articles} />
-		</div>
+		</Container>
 	);
 }
 

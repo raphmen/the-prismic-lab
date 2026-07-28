@@ -2,6 +2,7 @@ import { Content, filter, isFilled } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { createClient } from "@/prismicio";
 import { ARTICLE_FETCH_LINKS, collectDocuments } from "@/lib/prismic";
+import { Container } from "@/components/Container";
 import { ArticleList } from "@/components/ArticleList";
 import type { Article } from "@/lib/articles";
 
@@ -80,8 +81,15 @@ const Related = async ({ slice, context }: RelatedProps) => {
 
 	if (articles.length === 0) return null;
 
+	/**
+	 * Kept at the reading measure so the rule above it lines up with the prose it
+	 * follows. `size="default"` would give the card grid the wider listing measure
+	 * instead — a design call, not a constraint.
+	 */
 	return (
-		<section
+		<Container
+			as="section"
+			size="prose"
 			data-slice-type={slice.slice_type}
 			data-slice-variation={slice.variation}
 			className="my-12 border-t border-neutral-200 pt-10"
@@ -98,7 +106,7 @@ const Related = async ({ slice, context }: RelatedProps) => {
 			) : null}
 
 			<ArticleList articles={articles} />
-		</section>
+		</Container>
 	);
 };
 

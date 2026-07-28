@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
 import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
+import { Container } from "@/components/Container";
 import { EditorialHeader } from "@/components/EditorialHeader";
 import { ArticleBrowser } from "@/components/ArticleBrowser";
 
@@ -31,7 +32,7 @@ export default async function Page() {
 	]);
 
 	return (
-		<div className="mx-auto w-full max-w-5xl px-6 py-16">
+		<Container className="py-16">
 			<EditorialHeader
 				title={index?.data.title}
 				description={index?.data.description}
@@ -42,7 +43,7 @@ export default async function Page() {
 				articles={fixes}
 				emptyMessage="No fixes match these filters."
 			/>
-		</div>
+		</Container>
 	);
 }
 
