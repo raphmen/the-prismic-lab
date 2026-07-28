@@ -2,7 +2,7 @@
 
 :root {
 	/* Base surface + primary text */
-	--background: #171717;
+	--background: #000000;
 	--foreground: #ffffff;
 	/* Elevated surfaces (chips, code blocks) */
 	--muted: #262626;
@@ -14,7 +14,7 @@
 	--border: #404040;
 	/* Emphasis (buttons) — inverts against the background */
 	--accent: #ffffff;
-	--accent-foreground: #171717;
+	--accent-foreground: #000000;
 }
 
 @theme inline {

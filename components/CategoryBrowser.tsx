@@ -68,7 +68,7 @@ export function CategoryBrowser({ categories, articles }: CategoryBrowserProps) 
 									className={`flex w-full items-baseline justify-between gap-3 py-3 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-subtle ${
 										active
 											? "font-semibold text-foreground"
-											: "text-muted-foreground hover:text-foreground"
+											: "text-muted-foreground hover:text-foreground hover:cursor-pointer"
 									}`}
 								>
 									<span>{name || "Untitled category"}</span>

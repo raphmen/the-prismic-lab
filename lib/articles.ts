@@ -14,20 +14,6 @@ export const ARTICLE_TYPE_LABELS = {
 } as const satisfies Record<Article["type"], string>;
 
 /**
- * Difficulty in the order the model declares it, so the dropdown reads
- * Beginner → Advanced instead of alphabetically. Typed against the Select
- * field, so dropping or renaming an option in Prismic breaks the build here
- * rather than silently hiding it from the filter.
- */
-export const DIFFICULTY_ORDER = [
-	"Beginner",
-	"Intermediate",
-	"Advanced",
-] as const satisfies readonly NonNullable<
-	Content.ExperimentDocument["data"]["difficulty"]
->[];
-
-/**
  * A linked category / author / tech reduced to what a listing needs: the id to
  * filter on and the name to display.
  */

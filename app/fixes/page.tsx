@@ -22,28 +22,31 @@ export default async function Page() {
 	const client = createClient();
 
 	/**
-	 * A fix has no `difficulty` and no `stack`, so `ARTICLE_FETCH_LINKS` resolves
-	 * its categories and authors here — the two facets `ArticleBrowser` will find
-	 * options for. The whole set is loaded; filtering happens on the client.
+	 * A fix has no `stack`, so `ARTICLE_FETCH_LINKS` resolves its categories and
+	 * authors here — the two facets `ArticleBrowser` will find options for. The
+	 * whole set is loaded; filtering happens on the client.
 	 */
 	const [index, fixes] = await Promise.all([
 		getIndex(),
 		client.getAllByType("fix", { fetchLinks: ARTICLE_FETCH_LINKS }),
 	]);
 
+	/** Full-bleed header beside the content Container, as on `/experiments`. */
 	return (
-		<Container className="py-16">
+		<>
 			<EditorialHeader
 				title={index?.data.title}
 				description={index?.data.description}
 				featuredImage={index?.data.featured_image}
 			/>
 
-			<ArticleBrowser
-				articles={fixes}
-				emptyMessage="No fixes match these filters."
-			/>
-		</Container>
+			<Container className="py-16">
+				<ArticleBrowser
+					articles={fixes}
+					emptyMessage="No fixes match these filters."
+				/>
+			</Container>
+		</>
 	);
 }
 

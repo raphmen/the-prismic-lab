@@ -8,7 +8,6 @@ import {
 	articleCategories,
 	articleTechs,
 	collectRefs,
-	DIFFICULTY_ORDER,
 	sortArticlesByDate,
 	type Article,
 	type SortDirection,
@@ -30,13 +29,12 @@ export type ArticleBrowserProps = {
  *
  * Every facet is derived from the articles actually loaded, so an option can
  * never match zero articles, and a facet with nothing to offer renders no
- * control at all. That is also what makes one component serve both pages: fixes
- * carry no `difficulty` and no `stack`, so those two controls are simply absent
- * there, while experiments get all five.
+ * control at all. That is also what makes one component serve both pages: a fix
+ * carries no `stack`, so that control is simply absent there.
  *
  * Multi-selects (categories, stack) are OR: an article matches when it has at
- * least one of the selected values. The single-selects (difficulty, author) and
- * the title search are AND against those.
+ * least one of the selected values. The author select and the title search are
+ * AND against those.
  */
 export function ArticleBrowser({
 	articles,
@@ -45,7 +43,6 @@ export function ArticleBrowser({
 	const [search, setSearch] = useState("");
 	const [categoryIds, setCategoryIds] = useState<string[]>([]);
 	const [techIds, setTechIds] = useState<string[]>([]);
-	const [difficulty, setDifficulty] = useState("");
 	const [authorId, setAuthorId] = useState("");
 	const [direction, setDirection] = useState<SortDirection>("desc");
 
@@ -59,16 +56,6 @@ export function ArticleBrowser({
 	);
 	const techOptions = useMemo(
 		() => collectRefs(articles, articleTechs),
-		[articles],
-	);
-	const difficultyOptions = useMemo(
-		() =>
-			DIFFICULTY_ORDER.filter((option) =>
-				articles.some(
-					(article) =>
-						article.type === "experiment" && article.data.difficulty === option,
-				),
-			),
 		[articles],
 	);
 
@@ -95,13 +82,6 @@ export function ArticleBrowser({
 			}
 
 			if (
-				difficulty &&
-				!(article.type === "experiment" && article.data.difficulty === difficulty)
-			) {
-				return false;
-			}
-
-			if (
 				authorId &&
 				!articleAuthors(article).some((ref) => ref.id === authorId)
 			) {
@@ -112,20 +92,18 @@ export function ArticleBrowser({
 		});
 
 		return sortArticlesByDate(matches, direction);
-	}, [articles, search, categoryIds, techIds, difficulty, authorId, direction]);
+	}, [articles, search, categoryIds, techIds, authorId, direction]);
 
 	const isFiltered =
 		search !== "" ||
 		categoryIds.length > 0 ||
 		techIds.length > 0 ||
-		difficulty !== "" ||
 		authorId !== "";
 
 	function reset() {
 		setSearch("");
 		setCategoryIds([]);
 		setTechIds([]);
-		setDifficulty("");
 		setAuthorId("");
 	}
 
@@ -142,23 +120,6 @@ export function ArticleBrowser({
 							className={CONTROL_CLASS}
 						/>
 					</Field>
-
-					{difficultyOptions.length > 0 ? (
-						<Field label="Difficulty">
-							<select
-								value={difficulty}
-								onChange={(event) => setDifficulty(event.target.value)}
-								className={CONTROL_CLASS}
-							>
-								<option value="">Any</option>
-								{difficultyOptions.map((option) => (
-									<option key={option} value={option}>
-										{option}
-									</option>
-								))}
-							</select>
-						</Field>
-					) : null}
 
 					{authorOptions.length > 0 ? (
 						<Field label="Author">

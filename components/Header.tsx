@@ -12,9 +12,16 @@ export async function Header() {
 
 	const siteName = settings.data.site_name || "The Prismic Lab";
 
+	/**
+	 * `z-50` is not decoration: the bar is fixed, so it is a positioned element
+	 * with an automatic stacking order, and any later positioned element in the
+	 * page — an article's overlay banner, a slice with its own `relative` — would
+	 * otherwise paint straight over it. The mobile panel is a child, so it rides
+	 * along inside this layer.
+	 */
 	return (
-		<header className="fixed w-full bg-background">
-			<div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between gap-6 px-6">
+		<header className="fixed top-0 z-50 w-full bg-background">
+			<div className="mx-auto flex w-full max-w-5xl py-1 items-center justify-between gap-6 px-6">
 				<PrismicNextLink
 					href="/"
 					className="flex items-center gap-2 text-foreground"
@@ -45,7 +52,7 @@ export async function Header() {
 						<PrismicNextLink
 							key={i}
 							field={cta}
-							className="rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
+							className="bg-accent px-3 py-1 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
 						/>
 					))}
 				</nav>

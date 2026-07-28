@@ -34,19 +34,26 @@ export default async function Page() {
 		client.getAllByType("experiment", { fetchLinks: ARTICLE_FETCH_LINKS }),
 	]);
 
+	/**
+	 * The header is full-bleed, so it sits beside the content Container rather
+	 * than inside it; the list keeps its own `py-16` and therefore still opens on
+	 * padding when the singleton is empty and the header renders nothing.
+	 */
 	return (
-		<Container className="py-16">
+		<>
 			<EditorialHeader
 				title={index?.data.title}
 				description={index?.data.description}
 				featuredImage={index?.data.featured_image}
 			/>
 
-			<ArticleBrowser
-				articles={experiments}
-				emptyMessage="No experiments match these filters."
-			/>
-		</Container>
+			<Container className="py-16">
+				<ArticleBrowser
+					articles={experiments}
+					emptyMessage="No experiments match these filters."
+				/>
+			</Container>
+		</>
 	);
 }
 

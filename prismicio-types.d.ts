@@ -407,17 +407,6 @@ interface ExperimentDocumentData {
 	featured_image: prismic.ImageField<never>;
 	
 	/**
-	 * Difficulty field in *Experiment*
-	 *
-	 * - **Field Type**: Select
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: experiment.difficulty
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/select
-	 */
-	difficulty: prismic.SelectField<"Beginner" | "Intermediate" | "Advanced">;
-	
-	/**
 	 * Stack field in *Experiment*
 	 *
 	 * - **Field Type**: Group

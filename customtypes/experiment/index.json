@@ -54,17 +54,6 @@
           "label": "Featured Image"
         }
       },
-      "difficulty": {
-        "type": "Select",
-        "config": {
-          "label": "Difficulty",
-          "options": [
-            "Beginner",
-            "Intermediate",
-            "Advanced"
-          ]
-        }
-      },
       "stack": {
         "type": "Group",
         "config": {

@@ -47,16 +47,19 @@ export default async function Page() {
 
 	const articles: Article[] = [...experiments, ...fixes];
 
+	/** Full-bleed header beside the content Container, as on `/experiments`. */
 	return (
-		<Container className="py-16">
+		<>
 			<EditorialHeader
 				title={index?.data.title}
 				description={index?.data.description}
 				featuredImage={index?.data.featured_image}
 			/>
 
-			<CategoryBrowser categories={sortedCategories} articles={articles} />
-		</Container>
+			<Container className="py-16">
+				<CategoryBrowser categories={sortedCategories} articles={articles} />
+			</Container>
+		</>
 	);
 }
 
