@@ -49,6 +49,21 @@ type ContentRelationshipFieldWithData<
 type ArticleDocumentDataSlicesSlice = RichTextSlice | MediaSlice | CodeSnippetSlice | CalloutSlice | RelatedSlice
 
 /**
+ * Item in *Article → Stack*
+ */
+export interface ArticleDocumentDataStackItem {
+	/**
+	 * Tech field in *Article → Stack*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.stack[].tech
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	tech: ContentRelationshipFieldWithData<[{"id":"tech","fields":["name"]}]>;
+}
+
+/**
  * Item in *Article → Categories*
  */
 export interface ArticleDocumentDataCategoriesItem {
@@ -137,6 +152,17 @@ interface ArticleDocumentData {
 	 * - **Documentation**: https://prismic.io/docs/fields/select
 	 */
 	article_type: prismic.SelectField<"fix" | "news" | "tutorial", "filled">;
+	
+	/**
+	 * Stack field in *Article*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.stack[]
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	stack: prismic.GroupField<Simplify<ArticleDocumentDataStackItem>>;
 	
 	/**
 	 * Categories field in *Article*
@@ -1560,6 +1586,7 @@ declare module "@prismicio/client" {
 			ArticleDocument,
 			ArticleDocumentData,
 			ArticleDocumentDataSlicesSlice,
+			ArticleDocumentDataStackItem,
 			ArticleDocumentDataCategoriesItem,
 			ArticleDocumentDataAuthorsItem,
 			ArticlesIndexDocument,

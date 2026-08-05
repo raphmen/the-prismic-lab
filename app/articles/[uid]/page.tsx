@@ -19,7 +19,7 @@ export default async function Page({ params }: PageProps<"/articles/[uid]">) {
 		.catch(() => notFound());
 
 	/**
-	 * The categories and authors both resolve their linked names through
+	 * The categories, authors and stack all resolve their linked names through
 	 * `ARTICLE_FETCH_LINKS` above, so each is just a map over its group.
 	 *
 	 * The API leaves a group out of its response entirely when the document has
@@ -32,6 +32,10 @@ export default async function Page({ params }: PageProps<"/articles/[uid]">) {
 
 	const authors = (article.data.authors ?? [])
 		.map((item) => item.author)
+		.filter(isFilled.contentRelationship);
+
+	const techs = (article.data.stack ?? [])
+		.map((item) => item.tech)
 		.filter(isFilled.contentRelationship);
 
 	const publishedDate = formatArticleDate(article.data.published_date);
@@ -127,6 +131,31 @@ export default async function Page({ params }: PageProps<"/articles/[uid]">) {
 								))}
 
 						</div>
+
+						{/*
+						 * The whole row is conditional, not just the chips inside it — an
+						 * article without a stack renders no "Stack :" caption and no
+						 * margin, instead of an empty labelled row.
+						 */}
+						{techs.length > 0 ? (
+							<div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+								<span className="font-medium text-muted-foreground">
+									Stack :
+								</span>
+
+								<div className="flex flex-wrap gap-2">
+									{techs.map((tech) => (
+										<PrismicNextLink
+											key={tech.id}
+											field={tech}
+											className="rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:border-subtle hover:text-foreground"
+										>
+											{asText(tech.data?.name)}
+										</PrismicNextLink>
+									))}
+								</div>
+							</div>
+						) : null}
 
 					</header>
 				</Container>

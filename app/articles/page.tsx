@@ -22,11 +22,10 @@ export default async function Page() {
 	const client = createClient();
 
 	/**
-	 * An article has no `stack`, so `ARTICLE_FETCH_LINKS` resolves its categories
-	 * and authors here — two of the facets `ArticleBrowser` will find options
-	 * for. The third, Type, needs no links at all: `article_type` is a Select on
-	 * the document itself. The whole set is loaded; filtering happens on the
-	 * client.
+	 * `ARTICLE_FETCH_LINKS` resolves the categories, authors and stack here — the
+	 * three link-backed facets `ArticleBrowser` will find options for. Type needs
+	 * no links at all: `article_type` is a Select on the document itself. The
+	 * whole set is loaded; filtering happens on the client.
 	 */
 	const [index, articles] = await Promise.all([
 		getIndex(),
@@ -45,6 +44,14 @@ export default async function Page() {
 			<Container className="py-16">
 				<ArticleBrowser
 					articles={articles}
+					facets={[
+						"search",
+						"article_type",
+						"categories",
+						"stack",
+						"author",
+						"date",
+					]}
 					emptyMessage="No articles match these filters."
 				/>
 			</Container>

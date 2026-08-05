@@ -24,10 +24,10 @@ const ARTICLE_TYPE_LABELS = {
 /**
  * The label shown on an article's type badge.
  *
- * This has to branch on the document type — the same way `articleTechs` does —
- * because the two halves carry their kind differently: an experiment is a type
- * of its own, while fix, news and tutorial all share `type === "article"` and
- * are told apart only by the `article_type` Select.
+ * This has to branch on the document type, because the two halves carry their
+ * kind differently: an experiment is a type of its own, while fix, news and
+ * tutorial all share `type === "article"` and are told apart only by the
+ * `article_type` Select.
  *
  * That Select is empty until an editor picks a value — including on documents
  * last saved before the field existed — so an unset one falls back to the
@@ -80,10 +80,8 @@ export function articleAuthors(article: Article): ArticleRef[] {
 	);
 }
 
-/** Only experiments carry a stack; an article has none, so this is always empty. */
+/** Both types carry a stack, so this needs no branch on the document type. */
 export function articleTechs(article: Article): ArticleRef[] {
-	if (article.type !== "experiment") return [];
-
 	return toRefs(
 		(article.data.stack ?? [])
 			.map((item) => item.tech)
@@ -96,9 +94,9 @@ export function articleTechs(article: Article): ArticleRef[] {
  * and filtered like every other one — the id is the raw `article_type` value
  * that filtering compares, the name is the label a chip shows.
  *
- * The mirror image of `articleTechs`: only an `article` has an `article_type`,
- * so this is empty for an experiment and the facet disappears on
- * `/experiments`, exactly as the stack facet disappears on `/articles`.
+ * Unlike `articleTechs`, which both types now fill, only an `article` has an
+ * `article_type` — so this is empty for an experiment and the Type facet
+ * disappears wherever the list is experiments.
  */
 export function articleTypes(article: Article): ArticleRef[] {
 	if (article.type === "experiment") return [];

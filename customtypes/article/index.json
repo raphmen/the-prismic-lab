@@ -66,6 +66,29 @@
           "default_value": "fix"
         }
       },
+      "stack": {
+        "type": "Group",
+        "config": {
+          "label": "Stack",
+          "fields": {
+            "tech": {
+              "type": "Link",
+              "config": {
+                "label": "Tech",
+                "select": "document",
+                "customtypes": [
+                  {
+                    "id": "tech",
+                    "fields": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
       "categories": {
         "type": "Group",
         "config": {

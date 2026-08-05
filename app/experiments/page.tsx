@@ -5,6 +5,7 @@ import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
 import { Container } from "@/components/Container";
 import { EditorialHeader } from "@/components/EditorialHeader";
 import { ArticleBrowser } from "@/components/ArticleBrowser";
+import { sortArticlesByDate } from "@/lib/articles";
 
 /**
  * The `experiments_index` singleton owns `/experiments`; the repeatable
@@ -35,6 +36,14 @@ export default async function Page() {
 	]);
 
 	/**
+	 * This page offers no date toggle, so the order is settled here rather than
+	 * left to whatever the API happened to return: newest first, undated last.
+	 * `ArticleBrowser` preserves the order it is given whenever the `date` facet
+	 * is off, so this is the order a reader actually sees.
+	 */
+	const ordered = sortArticlesByDate(experiments, "desc");
+
+	/**
 	 * The header is full-bleed, so it sits beside the content Container rather
 	 * than inside it; the list keeps its own `py-16` and therefore still opens on
 	 * padding when the singleton is empty and the header renders nothing.
@@ -49,7 +58,8 @@ export default async function Page() {
 
 			<Container className="py-16">
 				<ArticleBrowser
-					articles={experiments}
+					articles={ordered}
+					facets={["search", "categories"]}
 					emptyMessage="No experiments match these filters."
 				/>
 			</Container>

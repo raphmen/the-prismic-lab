@@ -14,9 +14,23 @@ import {
 	type SortDirection,
 } from "@/lib/articles";
 
+/** A control the filter bar can render, named after the field it filters on. */
+export type ArticleFacet =
+	| "search"
+	| "article_type"
+	| "categories"
+	| "stack"
+	| "author"
+	| "date";
+
 export type ArticleBrowserProps = {
 	/** Every article for this index, already fetched with its links resolved. */
 	articles: Article[];
+	/**
+	 * Which controls to offer. Order is ignored — the bar lays its controls out
+	 * in a fixed order — so this is a set of names, not a layout.
+	 */
+	facets: readonly ArticleFacet[];
 	/** Shown when the filters match nothing. */
 	emptyMessage?: string;
 };
@@ -28,22 +42,27 @@ export type ArticleBrowserProps = {
  * no query params, no refetching, so the state is local and disappears on
  * navigation by design.
  *
- * Every facet is derived from the articles actually loaded, so an option can
- * never match zero articles, and a facet with nothing to offer renders no
- * control at all. That is also what makes one component serve both pages, and
- * it cuts both ways: an article carries no `stack` and an experiment no
- * `article_type`, so each page is left with exactly the facets it can fill —
- * search, Stack, categories, author, date on `/experiments`; search, Type,
- * categories, author, date on `/articles`.
+ * Which controls appear is the caller's call, through `facets`: the two indexes
+ * want different bars — search and categories on `/experiments`, the full set on
+ * `/articles` — and neither is a subset the component could infer from the
+ * documents alone. A facet still has to earn its place twice: it renders only if
+ * the page asked for it *and* the loaded documents give it options, so an option
+ * can never match zero articles and a page cannot ask for a control that would
+ * come up empty (an experiment has no `article_type`, for one).
  *
- * Multi-selects (Type, categories, stack) are OR: an article matches when it
- * has at least one of the selected values. The author select and the title
- * search are AND against those.
+ * A disabled facet is inert, not merely hidden: its filter is skipped, so state
+ * left behind by a facet that was switched off cannot quietly narrow the list.
+ *
+ * Multi-selects (Type, categories, Stack) are OR: an article matches when it has
+ * at least one of the selected values. The author select and the title search
+ * are AND against those.
  */
 export function ArticleBrowser({
 	articles,
+	facets,
 	emptyMessage = "No articles match these filters.",
 }: ArticleBrowserProps) {
+	const enabled = useMemo(() => new Set(facets), [facets]);
 	const [search, setSearch] = useState("");
 	const [typeIds, setTypeIds] = useState<string[]>([]);
 	const [categoryIds, setCategoryIds] = useState<string[]>([]);
@@ -52,31 +71,36 @@ export function ArticleBrowser({
 	const [direction, setDirection] = useState<SortDirection>("desc");
 
 	const typeOptions = useMemo(
-		() => collectRefs(articles, articleTypes),
-		[articles],
+		() => (enabled.has("article_type") ? collectRefs(articles, articleTypes) : []),
+		[enabled, articles],
 	);
 	const categoryOptions = useMemo(
-		() => collectRefs(articles, articleCategories),
-		[articles],
-	);
-	const authorOptions = useMemo(
-		() => collectRefs(articles, articleAuthors),
-		[articles],
+		() => (enabled.has("categories") ? collectRefs(articles, articleCategories) : []),
+		[enabled, articles],
 	);
 	const techOptions = useMemo(
-		() => collectRefs(articles, articleTechs),
-		[articles],
+		() => (enabled.has("stack") ? collectRefs(articles, articleTechs) : []),
+		[enabled, articles],
+	);
+	const authorOptions = useMemo(
+		() => (enabled.has("author") ? collectRefs(articles, articleAuthors) : []),
+		[enabled, articles],
 	);
 
 	const visible = useMemo(() => {
 		const query = search.trim().toLowerCase();
 
 		const matches = articles.filter((article) => {
-			if (query && !asText(article.data.title).toLowerCase().includes(query)) {
+			if (
+				enabled.has("search") &&
+				query &&
+				!asText(article.data.title).toLowerCase().includes(query)
+			) {
 				return false;
 			}
 
 			if (
+				enabled.has("article_type") &&
 				typeIds.length > 0 &&
 				!articleTypes(article).some((ref) => typeIds.includes(ref.id))
 			) {
@@ -84,6 +108,7 @@ export function ArticleBrowser({
 			}
 
 			if (
+				enabled.has("categories") &&
 				categoryIds.length > 0 &&
 				!articleCategories(article).some((ref) => categoryIds.includes(ref.id))
 			) {
@@ -91,6 +116,7 @@ export function ArticleBrowser({
 			}
 
 			if (
+				enabled.has("stack") &&
 				techIds.length > 0 &&
 				!articleTechs(article).some((ref) => techIds.includes(ref.id))
 			) {
@@ -98,6 +124,7 @@ export function ArticleBrowser({
 			}
 
 			if (
+				enabled.has("author") &&
 				authorId &&
 				!articleAuthors(article).some((ref) => ref.id === authorId)
 			) {
@@ -107,15 +134,31 @@ export function ArticleBrowser({
 			return true;
 		});
 
-		return sortArticlesByDate(matches, direction);
-	}, [articles, search, typeIds, categoryIds, techIds, authorId, direction]);
+		/**
+		 * Only the date toggle owns the order. Without it the caller's order is the
+		 * order — re-sorting here would silently override whatever the page decided,
+		 * which is the one thing a page that dropped the control cannot correct.
+		 */
+		return enabled.has("date")
+			? sortArticlesByDate(matches, direction)
+			: matches;
+	}, [
+		enabled,
+		articles,
+		search,
+		typeIds,
+		categoryIds,
+		techIds,
+		authorId,
+		direction,
+	]);
 
 	const isFiltered =
-		search !== "" ||
-		typeIds.length > 0 ||
-		categoryIds.length > 0 ||
-		techIds.length > 0 ||
-		authorId !== "";
+		(enabled.has("search") && search !== "") ||
+		(enabled.has("article_type") && typeIds.length > 0) ||
+		(enabled.has("categories") && categoryIds.length > 0) ||
+		(enabled.has("stack") && techIds.length > 0) ||
+		(enabled.has("author") && authorId !== "");
 
 	function reset() {
 		setSearch("");
@@ -125,19 +168,40 @@ export function ArticleBrowser({
 		setAuthorId("");
 	}
 
+	/**
+	 * The inline controls share a row; the chip rows below always span the bar.
+	 * Widening the grid past what is actually in it would strand a lone search box
+	 * at a quarter of the bar, so the track count follows the control count — and
+	 * lands back on the original `sm:2 / lg:4` for the full set.
+	 */
+	const inlineControls = [
+		enabled.has("search"),
+		enabled.has("author") && authorOptions.length > 0,
+		enabled.has("date"),
+	].filter(Boolean).length;
+
+	const gridColumns =
+		inlineControls >= 3
+			? "sm:grid-cols-2 lg:grid-cols-4"
+			: inlineControls === 2
+				? "sm:grid-cols-2"
+				: "";
+
 	return (
 		<>
 			<div className="mb-10 rounded-lg border border-border p-4 sm:p-5">
-				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-					<Field label="Search">
-						<input
-							type="search"
-							value={search}
-							onChange={(event) => setSearch(event.target.value)}
-							placeholder="Search titles…"
-							className={CONTROL_CLASS}
-						/>
-					</Field>
+				<div className={`grid gap-4 ${gridColumns}`}>
+					{enabled.has("search") ? (
+						<Field label="Search">
+							<input
+								type="search"
+								value={search}
+								onChange={(event) => setSearch(event.target.value)}
+								placeholder="Search titles…"
+								className={CONTROL_CLASS}
+							/>
+						</Field>
+					) : null}
 
 					{authorOptions.length > 0 ? (
 						<Field label="Author">
@@ -161,23 +225,27 @@ export function ArticleBrowser({
 					 * toggle, not to a form control, and wrapping a button in a `<label>`
 					 * would fold "Date" into its accessible name.
 					 */}
-					<div>
-						<span className="mb-1.5 block text-xs font-medium tracking-wide text-subtle uppercase">
-							Date
-						</span>
-						<button
-							type="button"
-							onClick={() =>
-								setDirection((current) => (current === "desc" ? "asc" : "desc"))
-							}
-							className={`${CONTROL_CLASS} flex items-center justify-between text-left transition-colors hover:border-subtle`}
-						>
-							{direction === "desc" ? "Newest first" : "Oldest first"}
-							<span aria-hidden className="text-subtle">
-								{direction === "desc" ? "↓" : "↑"}
+					{enabled.has("date") ? (
+						<div>
+							<span className="mb-1.5 block text-xs font-medium tracking-wide text-subtle uppercase">
+								Date
 							</span>
-						</button>
-					</div>
+							<button
+								type="button"
+								onClick={() =>
+									setDirection((current) =>
+										current === "desc" ? "asc" : "desc",
+									)
+								}
+								className={`${CONTROL_CLASS} flex items-center justify-between text-left transition-colors hover:border-subtle`}
+							>
+								{direction === "desc" ? "Newest first" : "Oldest first"}
+								<span aria-hidden className="text-subtle">
+									{direction === "desc" ? "↓" : "↑"}
+								</span>
+							</button>
+						</div>
+					) : null}
 				</div>
 
 				{typeOptions.length > 0 ? (
