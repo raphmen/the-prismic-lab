@@ -116,29 +116,36 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 							</p>
 						) : null}
 
-						{/* Categories */}
-						<div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-							<span className="font-medium text-muted-foreground">
-								Categories :
-							</span>
-							
-							{categories.map((category) => (
-								<PrismicNextLink
-									key={category.id}
-									field={category}
-									className="transition-colors hover:underline"
-								>
-									{asText(category.data?.name)}
-								</PrismicNextLink>
-							))}
-						</div>
+						{/* Conditional as a whole, for the same reason as the Stack row. */}
+						{categories.length > 0 ? (
+							<div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+								<span className="font-medium text-muted-foreground">
+									Categories :
+								</span>
 
-						<div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-							<span className="font-medium text-muted-foreground">
-								Stack :
-							</span>
-							
-							{techs.length > 0 ? (
+								{categories.map((category) => (
+									<PrismicNextLink
+										key={category.id}
+										field={category}
+										className="transition-colors hover:underline"
+									>
+										{asText(category.data?.name)}
+									</PrismicNextLink>
+								))}
+							</div>
+						) : null}
+
+						{/*
+						 * The whole row is conditional, not just the chips inside it — an
+						 * experiment without a stack renders no "Stack :" caption and no
+						 * margin, instead of an empty labelled row.
+						 */}
+						{techs.length > 0 ? (
+							<div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+								<span className="font-medium text-muted-foreground">
+									Stack :
+								</span>
+
 								<div className="flex flex-wrap gap-2">
 									{techs.map((tech) => (
 										<PrismicNextLink
@@ -150,8 +157,8 @@ export default async function Page({ params }: PageProps<"/experiments/[uid]">) 
 										</PrismicNextLink>
 									))}
 								</div>
-							) : null}
-						</div>
+							</div>
+						) : null}
 					</header>
 				</Container>
 			</Container>

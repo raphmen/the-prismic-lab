@@ -116,21 +116,23 @@ export default async function Page({ params }: PageProps<"/articles/[uid]">) {
 							</p>
 						) : null}
 
-						<div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-							<span className="font-medium text-muted-foreground">
-								Categories :
-							</span>
-							{categories.map((category) => (
+						{/* Conditional as a whole, for the same reason as the Stack row. */}
+						{categories.length > 0 ? (
+							<div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+								<span className="font-medium text-muted-foreground">
+									Categories :
+								</span>
+								{categories.map((category) => (
 									<PrismicNextLink
 										key={category.id}
 										field={category}
-										className="transition-colors  hover:underline"
+										className="transition-colors hover:underline"
 									>
 										{asText(category.data?.name)}
 									</PrismicNextLink>
 								))}
-
-						</div>
+							</div>
+						) : null}
 
 						{/*
 						 * The whole row is conditional, not just the chips inside it — an
