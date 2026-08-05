@@ -7,7 +7,7 @@ import { articleCategories, sortArticlesByDate, type Article } from "@/lib/artic
 
 export type CategoryBrowserProps = {
 	categories: Content.CategoryDocument[];
-	/** Every experiment and fix, already fetched with its links resolved. */
+	/** Every experiment and article, already fetched with its links resolved. */
 	articles: Article[];
 };
 
@@ -17,7 +17,7 @@ export type CategoryBrowserProps = {
  *
  * Selection is the only interaction, so the whole set is loaded once by the
  * server component and switching categories costs nothing. The right pane mixes
- * experiments and fixes — each card carries its own type badge — and scrolls on
+ * experiments and articles — each card carries its own type badge — and scrolls on
  * its own so a long category never pushes the category list out of view.
  */
 export function CategoryBrowser({ categories, articles }: CategoryBrowserProps) {

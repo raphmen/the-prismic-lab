@@ -8,14 +8,14 @@ import { components } from "@/slices";
 import { buildMetadata } from "@/lib/seo";
 import { Container } from "@/components/Container";
 import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
-import { formatArticleDate } from "@/lib/articles";
+import { articleTypeLabel, formatArticleDate } from "@/lib/articles";
 import type { ArticleContext } from "@/slices/Related";
 
-export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
+export default async function Page({ params }: PageProps<"/articles/[uid]">) {
 	const { uid } = await params;
 	const client = createClient();
-	const fix = await client
-		.getByUID("fix", uid, { fetchLinks: ARTICLE_FETCH_LINKS })
+	const article = await client
+		.getByUID("article", uid, { fetchLinks: ARTICLE_FETCH_LINKS })
 		.catch(() => notFound());
 
 	/**
@@ -26,15 +26,15 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 	 * no items for it (including documents last saved before the group existed),
 	 * so each one is read through a fallback even though its type says array.
 	 */
-	const categories = (fix.data.categories ?? [])
+	const categories = (article.data.categories ?? [])
 		.map((item) => item.category)
 		.filter(isFilled.contentRelationship);
 
-	const authors = (fix.data.authors ?? [])
+	const authors = (article.data.authors ?? [])
 		.map((item) => item.author)
 		.filter(isFilled.contentRelationship);
 
-	const publishedDate = formatArticleDate(fix.data.published_date);
+	const publishedDate = formatArticleDate(article.data.published_date);
 
 	/**
 	 * The article itself sets no width — the cover banner runs edge to edge, the
@@ -54,7 +54,7 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 				className="relative isolate mb-16 flex min-h-108 items-end overflow-hidden md:min-h-128"
 			>
 				<PrismicNextImage
-					field={fix.data.featured_image}
+					field={article.data.featured_image}
 					fallbackAlt=""
 					sizes="100vw"
 					loading="eager"
@@ -69,8 +69,13 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 				<Container size="prose" className="pt-64 pb-10 border-b-1 border-accent/30">
 					<header>
 						<div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+							{/*
+							 * The badge no longer names the document type — every fix, news
+							 * item and tutorial is an `article` — so it reads `article_type`
+							 * through the same helper the cards use.
+							 */}
 							<span className="rounded-full px-3 py-1 font-medium text-foreground border border-accent/50">
-								Fix
+								{articleTypeLabel(article)}
 							</span>
 							{publishedDate ? <span>{publishedDate}</span> : null}
 						</div>
@@ -98,15 +103,15 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 						</div>
 
 						<h1 className="text-4xl font-semibold tracking-tight text-foreground">
-							<PrismicText field={fix.data.title} />
+							<PrismicText field={article.data.title} />
 						</h1>
 
-						{fix.data.excerpt ? (
+						{article.data.excerpt ? (
 							<p className="mt-4 text-lg leading-8 text-muted-foreground">
-								{fix.data.excerpt}
+								{article.data.excerpt}
 							</p>
 						) : null}
-						
+
 						<div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
 							<span className="font-medium text-muted-foreground">
 								Categories :
@@ -128,9 +133,9 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 			</Container>
 
 			<SliceZone
-				slices={fix.data.slices}
+				slices={article.data.slices}
 				components={components}
-				context={{ article: fix } satisfies ArticleContext}
+				context={{ article } satisfies ArticleContext}
 			/>
 		</article>
 	);
@@ -138,22 +143,22 @@ export default async function Page({ params }: PageProps<"/fixes/[uid]">) {
 
 export async function generateMetadata({
 	params,
-}: PageProps<"/fixes/[uid]">): Promise<Metadata> {
+}: PageProps<"/articles/[uid]">): Promise<Metadata> {
 	const { uid } = await params;
 	const client = createClient();
-	const fix = await client.getByUID("fix", uid).catch(() => notFound());
+	const article = await client.getByUID("article", uid).catch(() => notFound());
 
 	return buildMetadata({
-		meta_title: fix.data.meta_title,
-		meta_description: fix.data.meta_description || fix.data.excerpt,
-		meta_image: fix.data.meta_image,
-		fallbackTitle: fix.data.title,
-		fallbackImage: fix.data.featured_image,
+		meta_title: article.data.meta_title,
+		meta_description: article.data.meta_description || article.data.excerpt,
+		meta_image: article.data.meta_image,
+		fallbackTitle: article.data.title,
+		fallbackImage: article.data.featured_image,
 	});
 }
 
 export async function generateStaticParams() {
 	const client = createClient();
-	const fixes = await client.getAllByType("fix");
-	return fixes.map((fix) => ({ uid: fix.uid }));
+	const articles = await client.getAllByType("article");
+	return articles.map((article) => ({ uid: article.uid }));
 }

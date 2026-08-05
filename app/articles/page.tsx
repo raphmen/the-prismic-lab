@@ -7,28 +7,30 @@ import { EditorialHeader } from "@/components/EditorialHeader";
 import { ArticleBrowser } from "@/components/ArticleBrowser";
 
 /**
- * The `fixes_index` singleton owns `/fixes`; the repeatable `fix` type owns
- * `/fixes/:uid` next door in `[uid]`.
+ * The `articles_index` singleton owns `/articles`; the repeatable `article` type
+ * owns `/articles/:uid` next door in `[uid]`.
  *
  * Read optionally for the same reason as `/experiments`: a missing or
  * unpublished index document costs the header, not the route.
  */
 async function getIndex() {
 	const client = createClient();
-	return client.getSingle("fixes_index").catch(() => null);
+	return client.getSingle("articles_index").catch(() => null);
 }
 
 export default async function Page() {
 	const client = createClient();
 
 	/**
-	 * A fix has no `stack`, so `ARTICLE_FETCH_LINKS` resolves its categories and
-	 * authors here — the two facets `ArticleBrowser` will find options for. The
-	 * whole set is loaded; filtering happens on the client.
+	 * An article has no `stack`, so `ARTICLE_FETCH_LINKS` resolves its categories
+	 * and authors here — two of the facets `ArticleBrowser` will find options
+	 * for. The third, Type, needs no links at all: `article_type` is a Select on
+	 * the document itself. The whole set is loaded; filtering happens on the
+	 * client.
 	 */
-	const [index, fixes] = await Promise.all([
+	const [index, articles] = await Promise.all([
 		getIndex(),
-		client.getAllByType("fix", { fetchLinks: ARTICLE_FETCH_LINKS }),
+		client.getAllByType("article", { fetchLinks: ARTICLE_FETCH_LINKS }),
 	]);
 
 	/** Full-bleed header beside the content Container, as on `/experiments`. */
@@ -42,8 +44,8 @@ export default async function Page() {
 
 			<Container className="py-16">
 				<ArticleBrowser
-					articles={fixes}
-					emptyMessage="No fixes match these filters."
+					articles={articles}
+					emptyMessage="No articles match these filters."
 				/>
 			</Container>
 		</>

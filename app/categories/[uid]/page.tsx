@@ -21,8 +21,8 @@ export default async function Page({ params }: PageProps<"/categories/[uid]">) {
 			filters: [filter.at("my.experiment.categories.category", category.id)],
 			fetchLinks: ARTICLE_FETCH_LINKS,
 		}),
-		client.getAllByType("fix", {
-			filters: [filter.at("my.fix.categories.category", category.id)],
+		client.getAllByType("article", {
+			filters: [filter.at("my.article.categories.category", category.id)],
 			fetchLinks: ARTICLE_FETCH_LINKS,
 		}),
 	]);

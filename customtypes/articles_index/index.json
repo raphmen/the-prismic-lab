@@ -1,6 +1,6 @@
 {
-  "id": "fixes_index",
-  "label": "Fixes Index",
+  "id": "articles_index",
+  "label": "Articles Index",
   "repeatable": false,
   "status": true,
   "format": "page",

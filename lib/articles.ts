@@ -5,13 +5,40 @@ import { asText, isFilled, type Content } from "@prismicio/client";
  * `title`, `excerpt`, `featured_image`, `categories`, `authors` and
  * `published_date`, which is exactly what every listing renders and filters on.
  */
-export type Article = Content.ExperimentDocument | Content.FixDocument;
+export type Article = Content.ExperimentDocument | Content.ArticleDocument;
 
-/** The label shown on an article's type badge. */
-export const ARTICLE_TYPE_LABELS = {
-	experiment: "Experiment",
+/**
+ * The labels for the kinds an `article` can declare. Experiments are absent on
+ * purpose: an experiment has no `article_type`, its document type already says
+ * what it is.
+ */
+const ARTICLE_TYPE_LABELS = {
 	fix: "Fix",
-} as const satisfies Record<Article["type"], string>;
+	news: "News",
+	tutorial: "Tutorial",
+} as const satisfies Record<
+	NonNullable<Content.ArticleDocument["data"]["article_type"]>,
+	string
+>;
+
+/**
+ * The label shown on an article's type badge.
+ *
+ * This has to branch on the document type — the same way `articleTechs` does —
+ * because the two halves carry their kind differently: an experiment is a type
+ * of its own, while fix, news and tutorial all share `type === "article"` and
+ * are told apart only by the `article_type` Select.
+ *
+ * That Select is empty until an editor picks a value — including on documents
+ * last saved before the field existed — so an unset one falls back to the
+ * generic label rather than rendering a blank badge.
+ */
+export function articleTypeLabel(article: Article): string {
+	if (article.type === "experiment") return "Experiment";
+
+	const type = article.data.article_type;
+	return type ? ARTICLE_TYPE_LABELS[type] : "Article";
+}
 
 /**
  * A linked category / author / tech reduced to what a listing needs: the id to
@@ -53,7 +80,7 @@ export function articleAuthors(article: Article): ArticleRef[] {
 	);
 }
 
-/** Only experiments carry a stack; a fix has none, so this is always empty. */
+/** Only experiments carry a stack; an article has none, so this is always empty. */
 export function articleTechs(article: Article): ArticleRef[] {
 	if (article.type !== "experiment") return [];
 
@@ -62,6 +89,22 @@ export function articleTechs(article: Article): ArticleRef[] {
 			.map((item) => item.tech)
 			.filter(isFilled.contentRelationship),
 	);
+}
+
+/**
+ * The kind an article declares, shaped as a ref so the type facet is collected
+ * and filtered like every other one — the id is the raw `article_type` value
+ * that filtering compares, the name is the label a chip shows.
+ *
+ * The mirror image of `articleTechs`: only an `article` has an `article_type`,
+ * so this is empty for an experiment and the facet disappears on
+ * `/experiments`, exactly as the stack facet disappears on `/articles`.
+ */
+export function articleTypes(article: Article): ArticleRef[] {
+	if (article.type === "experiment") return [];
+	if (!article.data.article_type) return [];
+
+	return [{ id: article.data.article_type, name: articleTypeLabel(article) }];
 }
 
 /**

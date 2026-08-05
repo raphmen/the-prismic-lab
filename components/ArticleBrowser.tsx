@@ -7,6 +7,7 @@ import {
 	articleAuthors,
 	articleCategories,
 	articleTechs,
+	articleTypes,
 	collectRefs,
 	sortArticlesByDate,
 	type Article,
@@ -21,7 +22,7 @@ export type ArticleBrowserProps = {
 };
 
 /**
- * The filter bar and filtered list for `/experiments` and `/fixes`.
+ * The filter bar and filtered list for `/experiments` and `/articles`.
  *
  * Filtering happens entirely here, over the array the server component loaded —
  * no query params, no refetching, so the state is local and disappears on
@@ -29,23 +30,31 @@ export type ArticleBrowserProps = {
  *
  * Every facet is derived from the articles actually loaded, so an option can
  * never match zero articles, and a facet with nothing to offer renders no
- * control at all. That is also what makes one component serve both pages: a fix
- * carries no `stack`, so that control is simply absent there.
+ * control at all. That is also what makes one component serve both pages, and
+ * it cuts both ways: an article carries no `stack` and an experiment no
+ * `article_type`, so each page is left with exactly the facets it can fill —
+ * search, Stack, categories, author, date on `/experiments`; search, Type,
+ * categories, author, date on `/articles`.
  *
- * Multi-selects (categories, stack) are OR: an article matches when it has at
- * least one of the selected values. The author select and the title search are
- * AND against those.
+ * Multi-selects (Type, categories, stack) are OR: an article matches when it
+ * has at least one of the selected values. The author select and the title
+ * search are AND against those.
  */
 export function ArticleBrowser({
 	articles,
 	emptyMessage = "No articles match these filters.",
 }: ArticleBrowserProps) {
 	const [search, setSearch] = useState("");
+	const [typeIds, setTypeIds] = useState<string[]>([]);
 	const [categoryIds, setCategoryIds] = useState<string[]>([]);
 	const [techIds, setTechIds] = useState<string[]>([]);
 	const [authorId, setAuthorId] = useState("");
 	const [direction, setDirection] = useState<SortDirection>("desc");
 
+	const typeOptions = useMemo(
+		() => collectRefs(articles, articleTypes),
+		[articles],
+	);
 	const categoryOptions = useMemo(
 		() => collectRefs(articles, articleCategories),
 		[articles],
@@ -64,6 +73,13 @@ export function ArticleBrowser({
 
 		const matches = articles.filter((article) => {
 			if (query && !asText(article.data.title).toLowerCase().includes(query)) {
+				return false;
+			}
+
+			if (
+				typeIds.length > 0 &&
+				!articleTypes(article).some((ref) => typeIds.includes(ref.id))
+			) {
 				return false;
 			}
 
@@ -92,16 +108,18 @@ export function ArticleBrowser({
 		});
 
 		return sortArticlesByDate(matches, direction);
-	}, [articles, search, categoryIds, techIds, authorId, direction]);
+	}, [articles, search, typeIds, categoryIds, techIds, authorId, direction]);
 
 	const isFiltered =
 		search !== "" ||
+		typeIds.length > 0 ||
 		categoryIds.length > 0 ||
 		techIds.length > 0 ||
 		authorId !== "";
 
 	function reset() {
 		setSearch("");
+		setTypeIds([]);
 		setCategoryIds([]);
 		setTechIds([]);
 		setAuthorId("");
@@ -161,6 +179,15 @@ export function ArticleBrowser({
 						</button>
 					</div>
 				</div>
+
+				{typeOptions.length > 0 ? (
+					<ChipRow
+						label="Type"
+						options={typeOptions}
+						selected={typeIds}
+						onToggle={(id) => setTypeIds(toggle(typeIds, id))}
+					/>
+				) : null}
 
 				{categoryOptions.length > 0 ? (
 					<ChipRow

@@ -57,7 +57,7 @@ const Related = async ({ slice, context }: RelatedProps) => {
 			.map((category) => category.id);
 
 		if (article && categoryIds.length > 0) {
-			const sharedCategory = (type: "experiment" | "fix") => [
+			const sharedCategory = (type: "experiment" | "article") => [
 				filter.any(`my.${type}.categories.category`, categoryIds),
 				filter.not("document.id", article.id),
 			];
@@ -69,8 +69,8 @@ const Related = async ({ slice, context }: RelatedProps) => {
 						fetchLinks: ARTICLE_FETCH_LINKS,
 						limit: AUTO_LIMIT,
 					}),
-					client.getAllByType("fix", {
-						filters: sharedCategory("fix"),
+					client.getAllByType("article", {
+						filters: sharedCategory("article"),
 						fetchLinks: ARTICLE_FETCH_LINKS,
 						limit: AUTO_LIMIT,
 					}),

@@ -20,8 +20,8 @@ export default async function Page({ params }: PageProps<"/authors/[uid]">) {
 			filters: [filter.at("my.experiment.authors.author", author.id)],
 			fetchLinks: ARTICLE_FETCH_LINKS,
 		}),
-		client.getAllByType("fix", {
-			filters: [filter.at("my.fix.authors.author", author.id)],
+		client.getAllByType("article", {
+			filters: [filter.at("my.article.authors.author", author.id)],
 			fetchLinks: ARTICLE_FETCH_LINKS,
 		}),
 	]);

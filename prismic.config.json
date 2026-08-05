@@ -2,6 +2,14 @@
   "repositoryName": "the-prismic-lab",
   "routes": [
     {
+      "type": "article",
+      "path": "/articles/:uid"
+    },
+    {
+      "type": "articles_index",
+      "path": "/articles"
+    },
+    {
       "type": "author",
       "path": "/authors/:uid"
     },
@@ -20,14 +28,6 @@
     {
       "type": "experiments_index",
       "path": "/experiments"
-    },
-    {
-      "type": "fix",
-      "path": "/fixes/:uid"
-    },
-    {
-      "type": "fixes_index",
-      "path": "/fixes"
     },
     {
       "type": "homepage",

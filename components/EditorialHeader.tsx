@@ -11,7 +11,7 @@ export type EditorialHeaderProps = {
 };
 
 /**
- * The header shared by the three index singletons (`/experiments`, `/fixes`,
+ * The header shared by the three index singletons (`/experiments`, `/articles`,
  * `/categories`).
  *
  * Same three layers as an article's cover banner — image, gradient, copy — with

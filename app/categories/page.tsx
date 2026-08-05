@@ -29,11 +29,11 @@ export default async function Page() {
 	 * resolved. Nothing here filters on a `my.<type>.…` path, so there is no
 	 * unqueryable-path risk to work around.
 	 */
-	const [index, categories, experiments, fixes] = await Promise.all([
+	const [index, categories, experiments, articlesDocs] = await Promise.all([
 		getIndex(),
 		client.getAllByType("category"),
 		client.getAllByType("experiment", { fetchLinks: ARTICLE_FETCH_LINKS }),
-		client.getAllByType("fix", { fetchLinks: ARTICLE_FETCH_LINKS }),
+		client.getAllByType("article", { fetchLinks: ARTICLE_FETCH_LINKS }),
 	]);
 
 	/**
@@ -45,7 +45,7 @@ export default async function Page() {
 		asText(a.data.name).localeCompare(asText(b.data.name)),
 	);
 
-	const articles: Article[] = [...experiments, ...fixes];
+	const articles: Article[] = [...experiments, ...articlesDocs];
 
 	/** Full-bleed header beside the content Container, as on `/experiments`. */
 	return (

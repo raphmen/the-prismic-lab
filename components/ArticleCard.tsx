@@ -1,8 +1,8 @@
 import { asText } from "@prismicio/client";
 import { PrismicNextImage, PrismicNextLink } from "@prismicio/next";
 import {
-	ARTICLE_TYPE_LABELS,
 	articleCategories,
+	articleTypeLabel,
 	formatArticleDate,
 	type Article,
 } from "@/lib/articles";
@@ -46,7 +46,7 @@ export function ArticleCard({ article }: { article: Article }) {
 
 			<div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium tracking-wide uppercase">
 				<span className="rounded-full border border-border px-2 py-0.5 text-foreground">
-					{ARTICLE_TYPE_LABELS[article.type]}
+					{articleTypeLabel(article)}
 				</span>
 				{categories.map((category) => (
 					<span key={category.id} className="text-subtle">

@@ -1,6 +1,6 @@
 {
-  "id": "fix",
-  "label": "Fix",
+  "id": "article",
+  "label": "Article",
   "repeatable": true,
   "status": true,
   "format": "page",
@@ -18,6 +18,9 @@
         "config": {
           "choices": {
             "rich_text": {
+              "type": "SharedSlice"
+            },
+            "media": {
               "type": "SharedSlice"
             },
             "code_snippet": {
@@ -49,6 +52,18 @@
         "type": "Image",
         "config": {
           "label": "Featured Image"
+        }
+      },
+      "article_type": {
+        "type": "Select",
+        "config": {
+          "label": "Article Type",
+          "options": [
+            "fix",
+            "news",
+            "tutorial"
+          ],
+          "default_value": "fix"
         }
       },
       "categories": {

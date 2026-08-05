@@ -46,6 +46,254 @@ type ContentRelationshipFieldWithData<
 		>
 }[Exclude<TCustomType[number], string>["id"]];
 
+type ArticleDocumentDataSlicesSlice = RichTextSlice | MediaSlice | CodeSnippetSlice | CalloutSlice | RelatedSlice
+
+/**
+ * Item in *Article → Categories*
+ */
+export interface ArticleDocumentDataCategoriesItem {
+	/**
+	 * Category field in *Article → Categories*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.categories[].category
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	category: ContentRelationshipFieldWithData<[{"id":"category","fields":["name"]}]>;
+}
+
+/**
+ * Item in *Article → Authors*
+ */
+export interface ArticleDocumentDataAuthorsItem {
+	/**
+	 * Author field in *Article → Authors*
+	 *
+	 * - **Field Type**: Content Relationship
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.authors[].author
+	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
+	 */
+	author: ContentRelationshipFieldWithData<[{"id":"author","fields":["name"]}]>;
+}
+
+/**
+ * Content for Article documents
+ */
+interface ArticleDocumentData {
+	/**
+	 * Slice Zone field in *Article*
+	 *
+	 * - **Field Type**: Slice Zone
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.slices[]
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/slices
+	 */
+	slices: prismic.SliceZone<ArticleDocumentDataSlicesSlice>;
+	
+	/**
+	 * Title field in *Article*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.title
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	title: prismic.RichTextField;
+	
+	/**
+	 * Excerpt field in *Article*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.excerpt
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	excerpt: prismic.KeyTextField;
+	
+	/**
+	 * Featured Image field in *Article*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.featured_image
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	featured_image: prismic.ImageField<never>;
+	
+	/**
+	 * Article Type field in *Article*
+	 *
+	 * - **Field Type**: Select
+	 * - **Placeholder**: *None*
+	 * - **Default Value**: fix
+	 * - **API ID Path**: article.article_type
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/select
+	 */
+	article_type: prismic.SelectField<"fix" | "news" | "tutorial", "filled">;
+	
+	/**
+	 * Categories field in *Article*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.categories[]
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	categories: prismic.GroupField<Simplify<ArticleDocumentDataCategoriesItem>>;
+	
+	/**
+	 * Authors field in *Article*
+	 *
+	 * - **Field Type**: Group
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.authors[]
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+	 */
+	authors: prismic.GroupField<Simplify<ArticleDocumentDataAuthorsItem>>;
+	
+	/**
+	 * Published Date field in *Article*
+	 *
+	 * - **Field Type**: Date
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.published_date
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/date
+	 */
+	published_date: prismic.DateField;/**
+	 * Meta Title field in *Article*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: A title of the page used for social media and search engines
+	 * - **API ID Path**: article.meta_title
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	meta_title: prismic.KeyTextField;
+	
+	/**
+	 * Meta Description field in *Article*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: A brief summary of the page
+	 * - **API ID Path**: article.meta_description
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	meta_description: prismic.KeyTextField;
+	
+	/**
+	 * Meta Image field in *Article*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: article.meta_image
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	meta_image: prismic.ImageField<never>;
+}
+
+/**
+ * Article document from Prismic
+ *
+ * - **API ID**: `article`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type ArticleDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<Simplify<ArticleDocumentData>, "article", Lang>;
+
+/**
+ * Content for Articles Index documents
+ */
+interface ArticlesIndexDocumentData {
+	/**
+	 * Title field in *Articles Index*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: articles_index.title
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	title: prismic.RichTextField;
+	
+	/**
+	 * Description field in *Articles Index*
+	 *
+	 * - **Field Type**: Rich Text
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: articles_index.description
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
+	 */
+	description: prismic.RichTextField;
+	
+	/**
+	 * Featured Image field in *Articles Index*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: articles_index.featured_image
+	 * - **Tab**: Main
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	featured_image: prismic.ImageField<never>;/**
+	 * Meta Title field in *Articles Index*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: A title of the page used for social media and search engines
+	 * - **API ID Path**: articles_index.meta_title
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	meta_title: prismic.KeyTextField;
+	
+	/**
+	 * Meta Description field in *Articles Index*
+	 *
+	 * - **Field Type**: Text
+	 * - **Placeholder**: A brief summary of the page
+	 * - **API ID Path**: articles_index.meta_description
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/text
+	 */
+	meta_description: prismic.KeyTextField;
+	
+	/**
+	 * Meta Image field in *Articles Index*
+	 *
+	 * - **Field Type**: Image
+	 * - **Placeholder**: *None*
+	 * - **API ID Path**: articles_index.meta_image
+	 * - **Tab**: SEO & Metadata
+	 * - **Documentation**: https://prismic.io/docs/fields/image
+	 */
+	meta_image: prismic.ImageField<never>;
+}
+
+/**
+ * Articles Index document from Prismic
+ *
+ * - **API ID**: `articles_index`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type ArticlesIndexDocument<Lang extends string = string> = prismic.PrismicDocumentWithoutUID<Simplify<ArticlesIndexDocumentData>, "articles_index", Lang>;
+
 /**
  * Item in *Author → Links*
  */
@@ -573,242 +821,6 @@ interface ExperimentsIndexDocumentData {
  */
 export type ExperimentsIndexDocument<Lang extends string = string> = prismic.PrismicDocumentWithoutUID<Simplify<ExperimentsIndexDocumentData>, "experiments_index", Lang>;
 
-type FixDocumentDataSlicesSlice = RichTextSlice | CodeSnippetSlice | CalloutSlice | RelatedSlice
-
-/**
- * Item in *Fix → Categories*
- */
-export interface FixDocumentDataCategoriesItem {
-	/**
-	 * Category field in *Fix → Categories*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.categories[].category
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	category: ContentRelationshipFieldWithData<[{"id":"category","fields":["name"]}]>;
-}
-
-/**
- * Item in *Fix → Authors*
- */
-export interface FixDocumentDataAuthorsItem {
-	/**
-	 * Author field in *Fix → Authors*
-	 *
-	 * - **Field Type**: Content Relationship
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.authors[].author
-	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
-	 */
-	author: ContentRelationshipFieldWithData<[{"id":"author","fields":["name"]}]>;
-}
-
-/**
- * Content for Fix documents
- */
-interface FixDocumentData {
-	/**
-	 * Slice Zone field in *Fix*
-	 *
-	 * - **Field Type**: Slice Zone
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.slices[]
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/slices
-	 */
-	slices: prismic.SliceZone<FixDocumentDataSlicesSlice>;
-	
-	/**
-	 * Title field in *Fix*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.title
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	title: prismic.RichTextField;
-	
-	/**
-	 * Excerpt field in *Fix*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.excerpt
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	excerpt: prismic.KeyTextField;
-	
-	/**
-	 * Featured Image field in *Fix*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.featured_image
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/image
-	 */
-	featured_image: prismic.ImageField<never>;
-	
-	/**
-	 * Categories field in *Fix*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.categories[]
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	categories: prismic.GroupField<Simplify<FixDocumentDataCategoriesItem>>;
-	
-	/**
-	 * Authors field in *Fix*
-	 *
-	 * - **Field Type**: Group
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.authors[]
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
-	 */
-	authors: prismic.GroupField<Simplify<FixDocumentDataAuthorsItem>>;
-	
-	/**
-	 * Published Date field in *Fix*
-	 *
-	 * - **Field Type**: Date
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.published_date
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/date
-	 */
-	published_date: prismic.DateField;/**
-	 * Meta Title field in *Fix*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: A title of the page used for social media and search engines
-	 * - **API ID Path**: fix.meta_title
-	 * - **Tab**: SEO & Metadata
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	meta_title: prismic.KeyTextField;
-	
-	/**
-	 * Meta Description field in *Fix*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: A brief summary of the page
-	 * - **API ID Path**: fix.meta_description
-	 * - **Tab**: SEO & Metadata
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	meta_description: prismic.KeyTextField;
-	
-	/**
-	 * Meta Image field in *Fix*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fix.meta_image
-	 * - **Tab**: SEO & Metadata
-	 * - **Documentation**: https://prismic.io/docs/fields/image
-	 */
-	meta_image: prismic.ImageField<never>;
-}
-
-/**
- * Fix document from Prismic
- *
- * - **API ID**: `fix`
- * - **Repeatable**: `true`
- * - **Documentation**: https://prismic.io/docs/content-modeling
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type FixDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<Simplify<FixDocumentData>, "fix", Lang>;
-
-/**
- * Content for Fixes Index documents
- */
-interface FixesIndexDocumentData {
-	/**
-	 * Title field in *Fixes Index*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fixes_index.title
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	title: prismic.RichTextField;
-	
-	/**
-	 * Description field in *Fixes Index*
-	 *
-	 * - **Field Type**: Rich Text
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fixes_index.description
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/rich-text
-	 */
-	description: prismic.RichTextField;
-	
-	/**
-	 * Featured Image field in *Fixes Index*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fixes_index.featured_image
-	 * - **Tab**: Main
-	 * - **Documentation**: https://prismic.io/docs/fields/image
-	 */
-	featured_image: prismic.ImageField<never>;/**
-	 * Meta Title field in *Fixes Index*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: A title of the page used for social media and search engines
-	 * - **API ID Path**: fixes_index.meta_title
-	 * - **Tab**: SEO & Metadata
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	meta_title: prismic.KeyTextField;
-	
-	/**
-	 * Meta Description field in *Fixes Index*
-	 *
-	 * - **Field Type**: Text
-	 * - **Placeholder**: A brief summary of the page
-	 * - **API ID Path**: fixes_index.meta_description
-	 * - **Tab**: SEO & Metadata
-	 * - **Documentation**: https://prismic.io/docs/fields/text
-	 */
-	meta_description: prismic.KeyTextField;
-	
-	/**
-	 * Meta Image field in *Fixes Index*
-	 *
-	 * - **Field Type**: Image
-	 * - **Placeholder**: *None*
-	 * - **API ID Path**: fixes_index.meta_image
-	 * - **Tab**: SEO & Metadata
-	 * - **Documentation**: https://prismic.io/docs/fields/image
-	 */
-	meta_image: prismic.ImageField<never>;
-}
-
-/**
- * Fixes Index document from Prismic
- *
- * - **API ID**: `fixes_index`
- * - **Repeatable**: `false`
- * - **Documentation**: https://prismic.io/docs/content-modeling
- *
- * @typeParam Lang - Language API ID of the document.
- */
-export type FixesIndexDocument<Lang extends string = string> = prismic.PrismicDocumentWithoutUID<Simplify<FixesIndexDocumentData>, "fixes_index", Lang>;
-
 /**
  * Item in *Footer → Footer Links*
  */
@@ -1157,7 +1169,7 @@ interface TechDocumentData {
  */
 export type TechDocument<Lang extends string = string> = prismic.PrismicDocumentWithUID<Simplify<TechDocumentData>, "tech", Lang>;
 
-export type AllDocumentTypes = AuthorDocument | CategoriesIndexDocument | CategoryDocument | ExperimentDocument | ExperimentsIndexDocument | FixDocument | FixesIndexDocument | FooterDocument | HeaderDocument | HomepageDocument | SettingsDocument | TechDocument;
+export type AllDocumentTypes = ArticleDocument | ArticlesIndexDocument | AuthorDocument | CategoriesIndexDocument | CategoryDocument | ExperimentDocument | ExperimentsIndexDocument | FooterDocument | HeaderDocument | HomepageDocument | SettingsDocument | TechDocument;
 
 /**
  * Primary content in *Callout → Info → Primary*
@@ -1397,7 +1409,7 @@ export interface RelatedSliceManualPrimaryItemsItem {
 	 * - **API ID Path**: related.manual.primary.items[].article
 	 * - **Documentation**: https://prismic.io/docs/fields/content-relationship
 	 */
-	article: prismic.ContentRelationshipField<"experiment"> | prismic.ContentRelationshipField<"fix">;
+	article: prismic.ContentRelationshipField<"experiment"> | prismic.ContentRelationshipField<"article">;
 }
 
 /**
@@ -1545,6 +1557,13 @@ declare module "@prismicio/client" {
 	
 	namespace Content {
 		export type {
+			ArticleDocument,
+			ArticleDocumentData,
+			ArticleDocumentDataSlicesSlice,
+			ArticleDocumentDataCategoriesItem,
+			ArticleDocumentDataAuthorsItem,
+			ArticlesIndexDocument,
+			ArticlesIndexDocumentData,
 			AuthorDocument,
 			AuthorDocumentData,
 			AuthorDocumentDataLinksItem,
@@ -1560,13 +1579,6 @@ declare module "@prismicio/client" {
 			ExperimentDocumentDataAuthorsItem,
 			ExperimentsIndexDocument,
 			ExperimentsIndexDocumentData,
-			FixDocument,
-			FixDocumentData,
-			FixDocumentDataSlicesSlice,
-			FixDocumentDataCategoriesItem,
-			FixDocumentDataAuthorsItem,
-			FixesIndexDocument,
-			FixesIndexDocumentData,
 			FooterDocument,
 			FooterDocumentData,
 			FooterDocumentDataFooterLinksItem,
