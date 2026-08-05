@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import { asText } from "@prismicio/client";
+import { PrismicNextLink } from "@prismicio/next";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
-import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
 import { Container } from "@/components/Container";
 import { EditorialHeader } from "@/components/EditorialHeader";
-import { CategoryBrowser } from "@/components/CategoryBrowser";
-import type { Article } from "@/lib/articles";
 
 /**
  * The `categories_index` singleton owns `/categories`; the repeatable `category`
@@ -24,16 +22,12 @@ export default async function Page() {
 	const client = createClient();
 
 	/**
-	 * The detail pane matches articles to the selected category on the client, so
-	 * both article types are loaded whole and up front with their categories
-	 * resolved. Nothing here filters on a `my.<type>.…` path, so there is no
-	 * unqueryable-path risk to work around.
+	 * This page is a directory, not a listing: it names the categories and hands
+	 * each one off to its own cluster page, so no article is fetched here.
 	 */
-	const [index, categories, experiments, articlesDocs] = await Promise.all([
+	const [index, categories] = await Promise.all([
 		getIndex(),
 		client.getAllByType("category"),
-		client.getAllByType("experiment", { fetchLinks: ARTICLE_FETCH_LINKS }),
-		client.getAllByType("article", { fetchLinks: ARTICLE_FETCH_LINKS }),
 	]);
 
 	/**
@@ -45,8 +39,6 @@ export default async function Page() {
 		asText(a.data.name).localeCompare(asText(b.data.name)),
 	);
 
-	const articles: Article[] = [...experiments, ...articlesDocs];
-
 	/** Full-bleed header beside the content Container, as on `/experiments`. */
 	return (
 		<>
@@ -57,7 +49,29 @@ export default async function Page() {
 			/>
 
 			<Container className="py-16">
-				<CategoryBrowser categories={sortedCategories} articles={articles} />
+				{sortedCategories.length > 0 ? (
+					<nav aria-label="Categories">
+						<ul className="divide-y divide-border border-y border-border">
+							{sortedCategories.map((category) => (
+								<li key={category.id}>
+									{/*
+									 * Linked by `document` rather than by a hand-written path, so
+									 * the URL keeps coming from the `category` route resolver in
+									 * `prismic.config.json`.
+									 */}
+									<PrismicNextLink
+										document={category}
+										className="flex py-3 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-subtle"
+									>
+										{asText(category.data.name) || "Untitled category"}
+									</PrismicNextLink>
+								</li>
+							))}
+						</ul>
+					</nav>
+				) : (
+					<p className="text-sm text-muted-foreground">No categories yet.</p>
+				)}
 			</Container>
 		</>
 	);
