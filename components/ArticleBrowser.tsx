@@ -342,7 +342,7 @@ function ChipRow({
 							type="button"
 							aria-pressed={active}
 							onClick={() => onToggle(option.id)}
-							className={`rounded-full border px-3 py-1 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-subtle ${
+							className={`rounded-full border px-3 py-1 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-subtle cursor-pointer ${
 								active
 									? "border-accent bg-accent text-accent-foreground"
 									: "border-border text-muted-foreground hover:border-subtle hover:text-foreground"
