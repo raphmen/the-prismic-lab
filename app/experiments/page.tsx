@@ -4,8 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
 import { Container } from "@/components/Container";
 import { EditorialHeader } from "@/components/EditorialHeader";
-import { ArticleBrowser } from "@/components/ArticleBrowser";
-import { sortArticlesByDate } from "@/lib/articles";
+import { ExperimentBrowser } from "@/components/ExperimentBrowser";
 
 /**
  * The `experiments_index` singleton owns `/experiments`; the repeatable
@@ -29,6 +28,10 @@ export default async function Page() {
 	 * `ARTICLE_FETCH_LINKS` so the filter bar and the cards can read names
 	 * without a follow-up query per link. No pagination — the whole set is loaded
 	 * and filtered on the client.
+	 *
+	 * The order is `ExperimentBrowser`'s to settle, not this page's: the grid has
+	 * no date control, so newest-first is a property of the component rather than
+	 * something each caller has to remember to arrange.
 	 */
 	const [index, experiments] = await Promise.all([
 		getIndex(),
@@ -36,17 +39,13 @@ export default async function Page() {
 	]);
 
 	/**
-	 * This page offers no date toggle, so the order is settled here rather than
-	 * left to whatever the API happened to return: newest first, undated last.
-	 * `ArticleBrowser` preserves the order it is given whenever the `date` facet
-	 * is off, so this is the order a reader actually sees.
-	 */
-	const ordered = sortArticlesByDate(experiments, "desc");
-
-	/**
 	 * The header is full-bleed, so it sits beside the content Container rather
-	 * than inside it; the list keeps its own `py-16` and therefore still opens on
+	 * than inside it; the grid keeps its own `py-16` and therefore still opens on
 	 * padding when the singleton is empty and the header renders nothing.
+	 *
+	 * The grid runs edge to edge — `full` plus the gutter every other Container
+	 * carries — rather than at the `default` reading measure the other indexes
+	 * use. Its cells are images, and three columns of image want the width.
 	 */
 	return (
 		<>
@@ -56,10 +55,9 @@ export default async function Page() {
 				featuredImage={index?.data.featured_image}
 			/>
 
-			<Container className="py-16">
-				<ArticleBrowser
-					articles={ordered}
-					facets={["search", "categories"]}
+			<Container size="full" className="px-6 py-16">
+				<ExperimentBrowser
+					experiments={experiments}
 					emptyMessage="No experiments match these filters."
 				/>
 			</Container>

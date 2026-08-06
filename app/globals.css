@@ -57,3 +57,172 @@ h1, h2, h3, h4, h5, h6 {
 	text-transform: uppercase;
 	letter-spacing: 1px;
 }
+
+/**
+ * `/experiments` cards: the preview → revealed state machine for
+ * `ExperimentCard`.
+ *
+ * A card has two states, not two designs. At rest it is a legible preview — flat
+ * wash, title, categories, all at half strength. On hover it commits: the scrim
+ * gradates, the frame arrives, the excerpt and date open beneath the title, and
+ * the preview copy comes up to full.
+ *
+ * Written here rather than as `group-hover:` utilities because those six moving
+ * parts are one state. Four custom properties carry it, so each state is four
+ * declarations in one place, hover-out is the same transition run backwards for
+ * free, and there is one block to retime.
+ *
+ * It also puts the resting state in the stylesheet, which is the point: the
+ * excerpt and date stay in the DOM for crawlers and screen readers, collapsed
+ * from the first painted frame rather than by a class applied after mount.
+ */
+.experiment-card {
+	/* The deep scrim, and the master the knobs below default to. */
+	--reveal: 0;
+	/* Title and categories: half strength as a preview, full on hover. */
+	--preview: 0.5;
+	/*
+	 * The excerpt and date follow `--reveal` by default, but on their own knob so
+	 * the narrow-screen rule below can hold them back without also holding back
+	 * the frame and the scrim.
+	 */
+	--detail: var(--reveal);
+	/*
+	 * The frame, likewise on its own knob: it is hover feedback, so the touch rule
+	 * below drops it without touching anything else the revealed state turns on.
+	 */
+	--frame: var(--reveal);
+	/* The excerpt + date row: collapsed, then sized to its own content. */
+	--expand: 0fr;
+	--zoom: 1;
+	--reveal-duration: 300ms;
+	--zoom-duration: 500ms;
+	--reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/*
+ * Gated on `(hover: hover)`: a tap on a touch screen leaves `:hover` stuck on the
+ * card it landed on, which would strand one tile revealed and the rest not.
+ */
+@media (hover: hover) {
+	.experiment-card:hover,
+	.experiment-card:focus-visible {
+		--reveal: 1;
+		--preview: 1;
+		--expand: 1fr;
+		--zoom: 1.05;
+	}
+}
+
+/*
+ * Where there is no hover there is nothing to preview *for*, so the revealed state
+ * is the resting state: the whole card is readable without a tap, and a tap stays
+ * navigation rather than becoming a first step.
+ *
+ * The frame and the zoom stay behind. Both are answers to a pointer that isn't
+ * there — and a frame that never comes and goes is not feedback, just an outline
+ * around every tile in the grid.
+ */
+@media (hover: none) {
+	.experiment-card {
+		--reveal: 1;
+		--preview: 1;
+		--expand: 1fr;
+		--frame: 0;
+	}
+}
+
+/*
+ * Under 500px a tile is barely 250px tall and the excerpt and date stop being
+ * legible copy and start being clutter, so the card is title and categories only —
+ * at every state, hover or not.
+ *
+ * They are held collapsed rather than `display: none`, which keeps the promise the
+ * rest of this block makes: the copy is in the DOM at every width, for crawlers and
+ * screen readers, and only ever hidden. Both `:hover` selectors are repeated so
+ * this outranks the rule above rather than losing to it under a pointer.
+ */
+@media (width < 500px) {
+	.experiment-card,
+	.experiment-card:hover,
+	.experiment-card:focus-visible {
+		--detail: 0;
+		--expand: 0fr;
+	}
+}
+
+/*
+ * The two scrims cross-fade rather than one gradient animating into another —
+ * `background-image` is not interpolable, so a single layer could only cut. Two
+ * layers on inverse opacities read as the wash gradating into the gradient, and
+ * because both are black, no blend along the way can brighten the image.
+ */
+.experiment-card-wash {
+	background: rgb(0 0 0 / 0.5);
+	opacity: calc(1 - var(--reveal));
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+.experiment-card-scrim {
+	background: linear-gradient(
+		to top,
+		rgb(0 0 0 / 0.95) 0%,
+		rgb(0 0 0 / 0.75) 50%,
+		rgb(0 0 0 / 0.5) 65%,
+		rgb(0 0 0 / 0.5) 100%
+	);
+	opacity: var(--reveal);
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+.experiment-card-frame {
+	opacity: var(--frame);
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+.experiment-card-preview {
+	opacity: var(--preview);
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+.experiment-card-detail {
+	opacity: var(--detail);
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+/*
+ * The title rises because the block below it grows, not because anything is
+ * translated: `0fr → 1fr` on a single-row grid animates from nothing to exactly
+ * the row's own content height, and the copy stack is anchored to the foot of the
+ * card, so that height can only come out of the space above. Retiming the reveal
+ * retimes the rise with it.
+ *
+ * The child owns the clipping: a `0fr` track only collapses to nothing if what
+ * sits in it can be overflowed and has no floor of its own.
+ */
+.experiment-card-expand {
+	display: grid;
+	grid-template-rows: var(--expand);
+	transition: grid-template-rows var(--reveal-duration) var(--reveal-ease);
+}
+
+.experiment-card-media {
+	transform: scale(var(--zoom));
+	transition: transform var(--zoom-duration) var(--reveal-ease);
+}
+
+/*
+ * Reduced motion keeps the reveal and drops the movement — everything still
+ * appears on hover, instantly, and the image never zooms. The `:hover` selectors
+ * are repeated so this outranks the equally specific rule above rather than losing
+ * to it once the pointer is over a card.
+ */
+@media (prefers-reduced-motion: reduce) {
+	.experiment-card,
+	.experiment-card:hover,
+	.experiment-card:focus-visible {
+		--reveal-duration: 0s;
+		--zoom-duration: 0s;
+		--zoom: 1;
+	}
+}

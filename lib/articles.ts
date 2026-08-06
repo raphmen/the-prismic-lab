@@ -132,11 +132,14 @@ export type SortDirection = "desc" | "asc";
  * chronological — no parsing, no timezone drift. Undated articles sort to the
  * end whichever direction is active, so flipping the toggle never promotes them
  * to the top of the list.
+ *
+ * Generic in the document type so sorting a list does not widen it: a caller
+ * holding experiments gets experiments back, not the `Article` union.
  */
-export function sortArticlesByDate(
-	articles: Article[],
+export function sortArticlesByDate<T extends Article>(
+	articles: T[],
 	direction: SortDirection,
-): Article[] {
+): T[] {
 	return [...articles].sort((a, b) => {
 		const left = a.data.published_date;
 		const right = b.data.published_date;
