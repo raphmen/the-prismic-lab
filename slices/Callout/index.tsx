@@ -9,21 +9,33 @@ import { RichText } from "@/components/RichText";
  */
 export type CalloutProps = SliceComponentProps<Content.CalloutSlice>;
 
+/**
+ * Every class has to appear here in full: Tailwind scans this file as text, so
+ * a class assembled at runtime (`${style.badge}/50`) generates no CSS.
+ *
+ * `content` reaches into the rich text with descendant selectors rather than
+ * relying on inherited color — the serializer sets `text-foreground` on the
+ * nodes themselves, and inheritance never beats a declaration on the element.
+ */
 const STYLES = {
 	info: {
 		label: "Info",
-		container: "border-sky-200 bg-sky-50",
-		badge: "text-sky-700",
+		container: "border-sky-300/20 bg-sky-50/10",
+		badge: "text-sky-300",
+		content: "[&_p]:text-sky-100 [&_li]:text-sky-100 [&_strong]:text-sky-50",
 	},
 	warning: {
 		label: "Warning",
-		container: "border-amber-200 bg-amber-50",
-		badge: "text-amber-700",
+		container: "border-amber-300/20 bg-amber-50/10",
+		badge: "text-amber-300",
+		content: "[&_p]:text-amber-100 [&_li]:text-amber-100 [&_strong]:text-amber-50",
 	},
 	tip: {
 		label: "Tip",
-		container: "border-emerald-200 bg-emerald-50",
-		badge: "text-emerald-700",
+		container: "border-emerald-300/20 bg-emerald-50/10",
+		badge: "text-emerald-300",
+		content:
+			"[&_p]:text-emerald-100 [&_li]:text-emerald-100 [&_strong]:text-emerald-50",
 	},
 } as const;
 
@@ -48,13 +60,15 @@ const Callout: FC<CalloutProps> = ({ slice }) => {
 			className="my-8"
 		>
 			<Container size="prose">
-				<div className={`rounded-lg border px-5 py-4 ${style.container}`}>
+				<div className={`rounded-lg border-2 px-5 py-4 ${style.container}`}>
 					<p
 						className={`mb-1 text-xs font-semibold tracking-wide uppercase ${style.badge}`}
 					>
 						{style.label}
 					</p>
-					<div className="[&_p:first-child]:mt-0 [&_p:last-child]:mb-0 text-neutral-700">
+					<div
+						className={`[&_p:first-child]:mt-0 [&_p:last-child]:mb-0 ${style.content}`}
+					>
 						<RichText field={slice.primary.content} />
 					</div>
 				</div>

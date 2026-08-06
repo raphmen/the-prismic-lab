@@ -95,12 +95,12 @@ const Related = async ({ slice, context }: RelatedProps) => {
 			className="my-12 border-t border-neutral-200 pt-10"
 		>
 			{slice.primary.title ? (
-				<h2 className="text-xl font-semibold tracking-tight text-neutral-900">
+				<h2 className="text-xl font-semibold tracking-tight text-accent">
 					{slice.primary.title}
 				</h2>
 			) : null}
 			{slice.primary.subtitle ? (
-				<p className="mt-1 mb-4 text-sm text-neutral-500">
+				<p className="mt-1 mb-4 text-sm text-muted-foreground">
 					{slice.primary.subtitle}
 				</p>
 			) : null}
