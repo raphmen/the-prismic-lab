@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { asText } from "@prismicio/client";
 import { createClient } from "@/prismicio";
 import { buildMetadata } from "@/lib/seo";
 import { ARTICLE_FETCH_LINKS } from "@/lib/prismic";
 import { Container } from "@/components/Container";
 import { EditorialHeader } from "@/components/EditorialHeader";
-import { ArticleBrowser } from "@/components/ArticleBrowser";
+import { ArticleIndexBrowser } from "@/components/ArticleIndexBrowser";
+import type { ArticleAvatars } from "@/components/ArticleIndexCard";
 
 /**
  * The `articles_index` singleton owns `/articles`; the repeatable `article` type
@@ -22,15 +24,41 @@ export default async function Page() {
 	const client = createClient();
 
 	/**
-	 * `ARTICLE_FETCH_LINKS` resolves the categories, authors and stack here — the
-	 * three link-backed facets `ArticleBrowser` will find options for. Type needs
-	 * no links at all: `article_type` is a Select on the document itself. The
-	 * whole set is loaded; filtering happens on the client.
+	 * `ARTICLE_FETCH_LINKS` resolves the categories, authors and stack names onto
+	 * each article, which is what a card renders and what the category column
+	 * filters on. The whole set is loaded; switching category happens on the
+	 * client.
+	 *
+	 * The categories are read as documents rather than collected off the articles:
+	 * this page is a directory of the site's categories, so one that has nothing
+	 * filed under it yet is still a box — it just opens on the empty state.
+	 *
+	 * The authors come along for their avatars only. An author's *name* already
+	 * arrives with the article; the avatar is wanted on this page alone, so it is
+	 * fetched here instead of being added to a link resolution every listing on
+	 * the site would pay for.
 	 */
-	const [index, articles] = await Promise.all([
+	const [index, articles, categories, authors] = await Promise.all([
 		getIndex(),
 		client.getAllByType("article", { fetchLinks: ARTICLE_FETCH_LINKS }),
+		client.getAllByType("category"),
+		client.getAllByType("author"),
 	]);
+
+	/**
+	 * Sorted here rather than through `orderings`, for the same reason
+	 * `/categories` does it: `name` is Rich Text, and Prismic only exposes
+	 * `my.category.name` as an ordering path once a published document fills it.
+	 * An unnamed category is dropped rather than rendered as a blank box.
+	 */
+	const categoryOptions = categories
+		.map((category) => ({ id: category.id, name: asText(category.data.name) }))
+		.filter((category) => category.name !== "")
+		.sort((a, b) => a.name.localeCompare(b.name));
+
+	const avatars: ArticleAvatars = Object.fromEntries(
+		authors.map((author) => [author.id, author.data.avatar]),
+	);
 
 	/** Full-bleed header beside the content Container, as on `/experiments`. */
 	return (
@@ -41,18 +69,11 @@ export default async function Page() {
 				featuredImage={index?.data.featured_image}
 			/>
 
-			<Container className="py-16">
-				<ArticleBrowser
+			<Container size="full" className="py-16">
+				<ArticleIndexBrowser
 					articles={articles}
-					facets={[
-						"search",
-						"article_type",
-						"categories",
-						"stack",
-						"author",
-						"date",
-					]}
-					emptyMessage="No articles match these filters."
+					categories={categoryOptions}
+					avatars={avatars}
 				/>
 			</Container>
 		</>

@@ -226,3 +226,178 @@ h1, h2, h3, h4, h5, h6 {
 		--zoom: 1;
 	}
 }
+
+/**
+ * `/articles` cards: the resting → revealed state machine for
+ * `ArticleIndexCard`.
+ *
+ * Same idea as the block above, different card. At rest this one is a poster —
+ * the cover under a deep gradient, with the type badge, the title and the excerpt
+ * at three-quarter strength. On hover it commits: the frame arrives, the gradient
+ * lifts a little, the copy comes up to full, and the byline, the date and the
+ * stack appear.
+ *
+ * Three knobs carry it, so each state is three declarations in one place,
+ * hover-out is the same transition run backwards for free, and there is one block
+ * to retime. Nothing is animated by a class applied after mount, which is what
+ * keeps the resting state correct in the first painted frame — the copy that is
+ * hidden here is in the DOM at every state, for crawlers and screen readers.
+ *
+ * The entrance is not here: cards rise into the grid under Motion, in
+ * `ArticleIndexGrid`. This block only describes a card sitting still.
+ */
+.article-index-card {
+	/* The master: the frame, the lighter gradient, and the revealed row. */
+	--reveal: 0;
+	/* Badge, title, excerpt: three-quarters as a poster, full on hover. */
+	--info: 0.75;
+	/* Stack, byline, date: absent until asked for. */
+	--extra: var(--reveal);
+	/*
+	 * The frame, on its own knob: it is pointer feedback, so the touch rule below
+	 * can drop it without holding back anything else the revealed state turns on.
+	 */
+	--frame: var(--reveal);
+	/* The byline + date row: collapsed to nothing, then sized to its own content.
+	   It cannot ride `--reveal` — `fr` is not a number, so each state names it. */
+	--expand: 0fr;
+	/* The cover's push into the card. Slower than the reveal, so it reads as the
+	   image settling rather than snapping. */
+	--zoom: 1;
+	--reveal-duration: 300ms;
+	--zoom-duration: 500ms;
+	--reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/*
+ * Gated on `(hover: hover)`: a tap on a touch screen leaves `:hover` stuck on the
+ * card it landed on, which would strand one card revealed and the rest not.
+ */
+@media (hover: hover) {
+	.article-index-card:hover,
+	.article-index-card:focus-visible {
+		--reveal: 1;
+		--info: 1;
+		--expand: 1fr;
+		--zoom: 1.05;
+	}
+}
+
+/*
+ * Where there is no hover there is nothing to preview *for*, so the revealed state
+ * is the resting state: the whole card is readable without a tap, and a tap stays
+ * navigation rather than becoming a first step.
+ *
+ * The frame and the zoom stay behind. Both are answers to a pointer that isn't
+ * there — and a frame that never comes and goes is not feedback, just an outline
+ * around every card in the grid. (`--zoom` needs no reset here: it is not wired
+ * to `--reveal`, so it is already at rest.)
+ */
+@media (hover: none) {
+	.article-index-card {
+		--reveal: 1;
+		--info: 1;
+		--expand: 1fr;
+		--frame: 0;
+	}
+}
+
+/*
+ * Under 400px a card is barely 270px tall, and the byline and the date stop being
+ * detail and start being clutter, so the narrowest cards are the cover, the badge,
+ * the title and the excerpt — at every state, hover or not. The stack stays: it is
+ * one line in the corner the copy was never going to use.
+ *
+ * They are collapsed rather than `display: none`, which keeps the promise the rest
+ * of this block makes: everything is in the DOM at every width, for crawlers and
+ * screen readers, and only ever hidden. Both `:hover` selectors are repeated so
+ * this outranks the rule above rather than losing to it under a pointer.
+ */
+@media (width < 400px) {
+	.article-index-card,
+	.article-index-card:hover,
+	.article-index-card:focus-visible {
+		--expand: 0fr;
+	}
+}
+
+/*
+ * The title and the excerpt rise because the block below them grows, not because
+ * anything is translated: `0fr → 1fr` on a single-row grid animates from nothing
+ * to exactly the row's own content height, and the copy stack is anchored to the
+ * foot of the card, so that height can only come out of the space above.
+ * Retiming the reveal retimes the rise with it.
+ *
+ * The child owns the clipping — a `0fr` track only collapses to nothing if what
+ * sits in it can be overflowed and has no floor of its own.
+ */
+.article-index-card-expand {
+	display: grid;
+	grid-template-rows: var(--expand);
+	transition: grid-template-rows var(--reveal-duration) var(--reveal-ease);
+}
+
+/*
+ * The two gradients cross-fade rather than one animating into the other —
+ * `background-image` is not interpolable, so a single layer could only cut. Both
+ * are black, so no frame of the blend can brighten the cover underneath.
+ *
+ * Resting: opaque, black at the foot falling to 75% at the head. Revealed: the
+ * whole layer eases back to 90% and the head lifts to 65%, so the image reads
+ * through while the copy over it is still carried.
+ */
+.article-index-card-scrim-rest {
+	background: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.75) 100%);
+	opacity: calc(1 - var(--reveal));
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+.article-index-card-scrim-hover {
+	background: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.65) 100%);
+	opacity: calc(var(--reveal) * 0.9);
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+.article-index-card-frame {
+	opacity: var(--frame);
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+.article-index-card-info {
+	opacity: var(--info);
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+.article-index-card-extra {
+	opacity: var(--extra);
+	transition: opacity var(--reveal-duration) var(--reveal-ease);
+}
+
+/*
+ * The cover pushes in behind the gradients. It is the only transform on the card,
+ * and it sits on the image itself — the entrance animation transforms the grid
+ * item above it, so the two never write to the same property.
+ *
+ * The card clips (`overflow-hidden`), so the scaled-up edges are cropped rather
+ * than spilling into the gap between cards.
+ */
+.article-index-card-media {
+	transform: scale(var(--zoom));
+	transition: transform var(--zoom-duration) var(--reveal-ease);
+}
+
+/*
+ * Reduced motion keeps the reveal and drops the movement — everything still
+ * appears on hover, instantly, and the cover never zooms. The `:hover` selectors
+ * are repeated so this outranks the equally specific rule above rather than
+ * losing to it under a pointer.
+ */
+@media (prefers-reduced-motion: reduce) {
+	.article-index-card,
+	.article-index-card:hover,
+	.article-index-card:focus-visible {
+		--reveal-duration: 0s;
+		--zoom-duration: 0s;
+		--zoom: 1;
+	}
+}
